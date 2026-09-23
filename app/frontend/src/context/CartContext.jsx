@@ -1,56 +1,78 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import { api } from "../lib/api";
+const CartContext = createContext(null);
+const STORAGE_KEY = "gecko-cart";
 
-const AuthContext = createContext(null);
-
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(undefined); // undefined = verificando, null = visitante
-
-  const refresh = useCallback(async () => {
+export function CartProvider({ children }) {
+  const [items, setItems] = useState(() => {
     try {
-      const { data } = await api.get("/auth/me");
-      setUser(data);
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     } catch (e) {
-      try {
-        await api.post("/auth/refresh");
-        const { data } = await api.get("/auth/me");
-        setUser(data);
-      } catch (e2) {
-        setUser(null);
-      }
+      return [];
     }
-  }, []);
+  });
+  const [promo, setPromo] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  const login = useCallback(async (email, password) => {
-    const { data } = await api.post("/auth/login", { email, password });
-    setUser(data);
-    return data;
-  }, []);
-
-  const register = useCallback(async (name, email, password) => {
-    const { data } = await api.post("/auth/register", { name, email, password });
-    setUser(data);
-    return data;
-  }, []);
-
-  const logout = useCallback(async () => {
     try {
-      await api.post("/auth/logout");
-    } finally {
-      setUser(null);
-    }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch (e) {}
+  }, [items]);
+
+  const addItem = useCallback((product, tier = "standard") => {
+    setItems((prev) => {
+      if (prev.some((i) => i.slug === product.slug && i.tier === tier)) return prev;
+      return [
+        ...prev,
+        {
+          slug: product.slug,
+          tier,
+          name: product.name,
+          tagline: product.tagline,
+          image: product.image,
+          price: product.prices[tier],
+        },
+      ];
+    });
+    setDrawerOpen(true);
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, login, register, logout, refresh }}>
-      {children}
-    </AuthContext.Provider>
+  const removeItem = useCallback((slug, tier) => {
+    setItems((prev) => prev.filter((i) => !(i.slug === slug && i.tier === tier)));
+  }, []);
+
+  const hasItem = useCallback(
+    (slug) => items.some((i) => i.slug === slug),
+    [items],
   );
+
+  const clear = useCallback(() => {
+    setItems([]);
+    setPromo(null);
+  }, []);
+
+  const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price, 0), [items]);
+  const discount = promo ? Math.round((subtotal * promo.percent) / 100) : 0;
+  const total = subtotal - discount;
+
+  const value = {
+    items,
+    promo,
+    setPromo,
+    addItem,
+    removeItem,
+    hasItem,
+    clear,
+    subtotal,
+    discount,
+    total,
+    count: items.length,
+    drawerOpen,
+    setDrawerOpen,
+  };
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useCart = () => useContext(CartContext);
