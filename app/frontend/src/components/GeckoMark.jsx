@@ -5,7 +5,7 @@ export function GeckoMark({ className = "", ...props }) {
   const src =
     theme === "dark"
       ? "/assets/branding/gecko-mark.png"
-      : "/assets/branding/gecko-mark-light.png";
+      : "/assets/branding/gecko-mark-whitw.jpeg";
   return (
     <img
       src={src}
