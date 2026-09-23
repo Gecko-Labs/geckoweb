@@ -1,79 +1,28 @@
 <!doctype html>
-<html lang="pt-BR" class="dark">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#090B0D" />
-        <meta name="description" content="GeckoLabs — Software Engineering & Architecture. Softwares, plugins e runtimes de engenharia com precisão de elite: kernels eBPF, runtimes WASM, vaults criptográficos e ferramentas de arquitetura." />
-        <meta property="og:title" content="GeckoLabs — Software Engineering & Architecture" />
-        <meta property="og:description" content="Softwares de precisão para engenheiros: observabilidade de kernel, runtimes de edge e cofres criptográficos." />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="%PUBLIC_URL%/assets/branding/gecko-mark-light.png" />
-        <link rel="icon" type="image/png" href="%PUBLIC_URL%/assets/branding/gecko-mark-light.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-        <title>GeckoLabs — Software Engineering &amp; Architecture</title>
-                <script>
-            (function () {
-                try {
-                    var stored = localStorage.getItem("gecko-theme");
-                    var theme = stored || "dark";
-                    document.documentElement.classList.toggle("light", theme === "light");
-                    document.documentElement.classList.toggle("dark", theme !== "light");
-                } catch (e) {}
-            })();
-        </script>
-        <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
-        <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
-    </head>
-    <body>
-        <noscript>Você precisa habilitar JavaScript para acessar a GeckoLabs Store.</noscript>
-        <div id="root"></div>
-       <script>
-            !(function (t, e) {
-                var o, n, p, r;
-                e.__SV ||
-                    ((window.posthog = e),
-                    (e._i = []),
-                    (e.init = function (i, s, a) {
-                        function g(t, e) {
-                            var o = e.split(".");
-                            2 == o.length && ((t = t[o[0]]), (e = o[1])),
-                                (t[e] = function () {
-                                    t.push(
-                                        [e].concat(
-                                            Array.prototype.slice.call(
-                                                arguments,
-                                                0,
-                                            ),
-                                        ),
-                                    );
-                                });
-                        ((p = t.createElement("script")).type =
-                            "text/javascript"),
-                            (p.crossOrigin = "anonymous"),
-                            (p.async = !0),
-                            (p.src =
-                                s.api_host.replace(
-                                    ".i.posthog.com",
-                                    "-assets.i.posthog.com",
-                                ) + "/static/array.js"),
-                            (r =
-                                t.getElementsByTagName(
-                                    "script",
-                                )[0]).parentNode.insertBefore(p, r);
-                        var u = e;
-                        for (
-                            void 0 !== a ? (u = e[a]) : void 0,
-                                u.people = u.people || [],
-                                u.toString = function () {
-                                    return "posthog";
-                                },
-                                "posthog" !== e && (e = "posthog"),
-                                u.__SV = 1);
-                    })(document, window.posthog || []);
-            })(document, window.posthog 
-        </script>
-    </body>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <meta
+      name="description"
+      content="Gecko Labs — softwares, produtos e soluções digitais."
+    />
+
+    <meta name="theme-color" content="#0a0a0a" />
+
+    <link rel="icon" type="image/png" href="/assets/branding/gecko-mark.png" />
+
+    <title>Gecko Labs</title>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
