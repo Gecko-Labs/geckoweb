@@ -1,0 +1,293 @@
+{
+  "project_name": "GeckoLabs — Software Engineering & Architecture Store",
+  "theme": {
+    "default_mode": "dark",
+    "toggle_supported": true,
+    "dark_palette": {
+      "background": "#090B0D",
+      "surface_base": "#0E1217",
+      "surface_card": "#13181F",
+      "surface_elevated": "#1A222B",
+      "surface_glass": "rgba(14, 18, 23, 0.75)",
+      "border_subtle": "rgba(255, 255, 255, 0.08)",
+      "border_glow": "rgba(46, 204, 113, 0.28)",
+      "text_primary": "#F3F5F7",
+      "text_secondary": "#9BA3AF",
+      "text_muted": "#606B7B",
+      "accent_emerald": "#10B981",
+      "accent_emerald_deep": "#064E3B",
+      "accent_gecko_neon": "#22C55E",
+      "accent_slate_gray": "#334155",
+      "accent_amber": "#F59E0B",
+      "danger": "#EF4444"
+    },
+    "light_palette": {
+      "background": "#F8FAFC",
+      "surface_base": "#FFFFFF",
+      "surface_card": "#F1F5F9",
+      "surface_elevated": "#E2E8F0",
+      "surface_glass": "rgba(255, 255, 255, 0.8)",
+      "border_subtle": "rgba(15, 23, 42, 0.08)",
+      "border_glow": "rgba(16, 185, 129, 0.3)",
+      "text_primary": "#0F172A",
+      "text_secondary": "#475569",
+      "text_muted": "#94A3B8",
+      "accent_emerald": "#059669",
+      "accent_emerald_deep": "#047857",
+      "accent_gecko_neon": "#16A34A",
+      "accent_slate_gray": "#64748B",
+      "accent_amber": "#D97706",
+      "danger": "#DC2626"
+    }
+  },
+  "typography": {
+    "font_family_display": "Barlow Condensed, Syne, Outfit, sans-serif",
+    "font_family_body": "JetBrains Mono, IBM Plex Sans, -apple-system, sans-serif",
+    "font_family_code": "JetBrains Mono, Fira Code, monospace",
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap",
+    "hierarchy": {
+      "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[1.05]",
+      "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-snug",
+      "h3_card": "text-xl sm:text-2xl font-bold tracking-tight",
+      "h4_widget": "text-lg sm:text-xl font-semibold tracking-tight",
+      "body_lead": "text-base sm:text-lg leading-relaxed text-muted-foreground",
+      "body_standard": "text-sm sm:text-base leading-normal",
+      "caption_mono": "text-xs font-mono tracking-wider uppercase text-emerald-500/90",
+      "manifesto_label": "text-xs font-mono uppercase tracking-[0.25em] text-emerald-400/80"
+    }
+  },
+  "brand_identity": {
+    "name": "GeckoLabs",
+    "descriptor": "SOFTWARE ENGINEERING & ARCHITECTURE",
+    "symbol_spec": "Low-poly geometric gecko vector emblem crafted with faceted polygonal triangles (#1F2937, #374151, #064E3B, #10B981, #22C55E). Features precision vertices and subtle circuit micro-tracks, emphasizing architectural rigidity and biomimetic stealth.",
+    "brand_pillars": [
+      "Zero-latency compiled kernel architecture",
+      "Enterprise cryptographic license vaults",
+      "Production-proven add-ons for Kubernetes, Kafka, Figma & WebAssembly",
+      "Audited deterministic performance and instant SDK downloads"
+    ]
+  },
+  "visual_enhancers": {
+    "geometric_grid_background": "Subtle 24px blueprint grid (radial gradient mask) overlaid with random vertex nodal dots and thin neon-emerald tracer lines.",
+    "kinetic_reveal": "Line-by-line staggered text unfold with spring physics using framer-motion (0.04s stagger, duration 0.6s).",
+    "editorial_ticker": "Slow-drifting horizontal ribbon using marquee motion featuring runtime benchmarks, kernel tags, and zero-downtime stamps.",
+    "manifesto_chapters": "Numbered architectural chapters (e.g., 01 // COMPILED CORE, 02 // ZERO ALLOCATION, 03 // AIR-GAPPED VERIFICATION) rendered with mono micro-labels and raw technical diagrams.",
+    "tracing_beam": "Active product and pricing cards bordered by a traveling 1px gradient beam (#10B981 -> #22C55E -> transparent)."
+  },
+  "layout_and_grids": {
+    "container_max_width": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "hero_grid": "grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[85vh] pt-24 pb-16",
+    "bento_showcase": "grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-6 items-stretch",
+    "catalog_layout": "grid grid-cols-1 lg:grid-cols-4 gap-8 items-start",
+    "product_detail_split": "grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12",
+    "spacing_philosophy": "Generous vertical rhythm: section padding py-20 lg:py-28; card internal padding p-6 lg:p-8; no edge collisions."
+  },
+  "pages_and_flows": {
+    "home": {
+      "sections": [
+        "Kinetic Hero (Manifesto hook, low-poly interactive gecko emblem, line-reveal headline, quick-stats live telemetry ticker, CTAs)",
+        "Editorial Architecture Ribbon (Slow marquee of architecture protocols: WASM, eBPF, Rust, Envoy, Postgres-Citus, WebGPU)",
+        "Chapter 01: Core Software Flagships (Bento Grid featuring top 4 software suites with live telemetry pills and instant trial modal)",
+        "Chapter 02: Biomimetic Engineering Matrix (Interactive comparison: GeckoLabs compiled architecture vs legacy digital tools)",
+        "Chapter 03: Ecosystem & Extensibility Add-ons (Filterable interactive preview: IDE plugins, CLI agents, CI/CD runners)",
+        "Enterprise Architecture Assurance (SOC2 Type II, deterministic hash verification, air-gapped license model)",
+        "Cinematic Architectural CTA (Instant access prompt with interactive terminal code copy)",
+        "Engineering Footer (Multi-column system map, uptime telemetry, status dot, currency switcher, legal links)"
+      ]
+    },
+    "catalog": {
+      "path": "/products",
+      "features": [
+        "Category tabs (All, High-Perf Kernels, IDE Plugins, Observability Add-ons, Security Vaults, Architecture Runtimes)",
+        "Search bar with live instant filtering and tags",
+        "Price range filter, rating filter, and license type selector (Individual, Team, Enterprise Site)",
+        "Product cards with visual preview, architecture tags, benchmark badges, quick-add to cart, and direct view details"
+      ]
+    },
+    "product_detail": {
+      "path": "/products/:slug",
+      "features": [
+        "High-density breadcrumbs and verified architecture badge",
+        "Gallery/screenshot viewport with tabbed views (Interface, Code Output, Architecture Diagram)",
+        "Sticky purchase console with license selector (Standard Seat, Studio 5-Pack, Unlimited Enterprise Vault)",
+        "Technical Specifications matrix (Runtime compatibility, memory footprint, OS targets, compiler dependencies)",
+        "Interactive Terminal preview: 'curl -fsSL https://dl.geckolabs.dev/install.sh | sh'",
+        "Deep interactive FAQ accordion and verified engineer reviews"
+      ]
+    },
+    "cart_and_checkout": {
+      "paths": ["/cart", "/checkout"],
+      "features": [
+        "Persistent cart drawer / slide-over and full /cart page",
+        "Promo code engine with developer codes (e.g., GECKO-LAUNCH-20, ARCHITECT-10)",
+        "Stripe-styled checkout flow with realistic mock/live Stripe Elements integration and card preview",
+        "Instant license key generation & downloadable zip simulation upon successful checkout",
+        "Complete VAT/Tax calculations and invoice generator preview"
+      ]
+    },
+    "account_dashboard": {
+      "path": "/account",
+      "tabs": [
+        "Licenses (Active cryptographic keys, machine activations, copy key, revoke, extend)",
+        "Orders (Order history, PDF receipt generator, Stripe transaction ID, invoice download)",
+        "Downloads (Direct artifact binaries: macOS ARM64/x64, Linux amd64, Windows x64, checksum SHA256)",
+        "Settings (API tokens for CLI, webhook endpoints, theme toggle, security notifications)"
+      ]
+    },
+    "auth": {
+      "paths": ["/login", "/register"],
+      "features": [
+        "Engineered auth card with GitHub/GitLab quick-login mock and Email/Password flow",
+        "Demo fast-switch buttons: 'Login as Architect demo user' for instant testing",
+        "2FA token input mock"
+      ]
+    },
+    "support_and_legal": {
+      "paths": ["/support", "/terms", "/privacy"],
+      "features": [
+        "Support portal with ticket creator, architecture diagnostics upload, and live status badge",
+        "Rigorous Developer License Agreement (Commercial redistribution rights, reverse engineering clause, SLA guarantees)",
+        "GDPR/CCPA compliant privacy declaration for telemetric opt-in"
+      ]
+    }
+  },
+  "mock_data_products": [
+    {
+      "id": "gecko-trace-ultra",
+      "slug": "gecko-trace-ultra",
+      "title": "GeckoTrace Ultra // Kernel eBPF Observability Suite",
+      "category": "High-Perf Kernels",
+      "price": 189,
+      "enterprise_price": 749,
+      "rating": 4.98,
+      "reviews_count": 142,
+      "version": "v3.4.1",
+      "badge": "Flagship 2026",
+      "short_desc": "Sub-microsecond Linux & Darwin kernel telemetry engine with zero runtime overhead and automated memory leak capture.",
+      "image": "https://images.unsplash.com/photo-1619410283995-43d9134e7656?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHw0fHxtaW5pbWFsJTIwdGVjaCUyMHNlcnZlciUyMGNvZGUlMjBzb2Z0d2FyZXxlbnwwfHx8fDE3OTAxODMzMzN8MA&ixlib=rb-4.1.0&q=85",
+      "compatibility": ["Linux x86_64/arm64", "macOS Sonoma/Sequoia", "Docker", "Kubernetes 1.28+"],
+      "tags": ["eBPF", "Zero-Overhead", "C99", "Rust Engine"]
+    },
+    {
+      "id": "prism-mesh-addon",
+      "slug": "prism-mesh-addon",
+      "title": "PrismMesh // Envoy & Istio Service Mesh Accelerator",
+      "category": "Architecture Runtimes",
+      "price": 149,
+      "enterprise_price": 590,
+      "rating": 4.92,
+      "reviews_count": 89,
+      "version": "v2.1.0",
+      "badge": "Architect Pick",
+      "short_desc": "High-throughput binary protocol plugin compiling dynamic routing trees directly into SIMD-accelerated machine code.",
+      "image": "https://images.unsplash.com/photo-1640904422940-f3070d65ae29?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHw0fHxtaW5pbWFsJTIwYWJzdHJhY3QlMjBkYXJrJTIwdGVjaG5vbG9neSUyMGdyaWQlMjAzZHxlbnwwfHx8fDE3OTAxODMzNDJ8MA&ixlib=rb-4.1.0&q=85",
+      "compatibility": ["Envoy v1.30+", "Istio 1.22+", "WASM Edge"],
+      "tags": ["WASM", "SIMD", "Low-Latency", "Networking"]
+    },
+    {
+      "id": "poly-vault-crypto",
+      "slug": "poly-vault-crypto",
+      "title": "PolyVault HSM // Cryptographic Secret Enclave",
+      "category": "Security Vaults",
+      "price": 229,
+      "enterprise_price": 899,
+      "rating": 4.99,
+      "reviews_count": 210,
+      "version": "v4.0.2",
+      "badge": "FIPS-Ready",
+      "short_desc": "Post-quantum lattice cryptographic enclave daemon with zero-knowledge secret rotation for distributed architectures.",
+      "image": "https://images.unsplash.com/photo-1562813733-b31f71025d54?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHwxfHxjeWJlciUyMHNlY3VyaXR5JTIwZGV2ZWxvcGVyJTIwdGVybWluYWwlMjBkYXJrfGVufDB8fHx8MTc5MDE4MzMzM3ww&ixlib=rb-4.1.0&q=85",
+      "compatibility": ["AWS Nitro", "GCP Confidential VM", "Bare Metal TPM 2.0"],
+      "tags": ["Post-Quantum", "HSM", "Zero-Trust", "Go & Rust"]
+    },
+    {
+      "id": "gecko-lens-ide",
+      "slug": "gecko-lens-ide",
+      "title": "GeckoLens AI // VSCode & JetBrains Architecture Co-Pilot",
+      "category": "IDE Plugins",
+      "price": 79,
+      "enterprise_price": 290,
+      "rating": 4.88,
+      "reviews_count": 340,
+      "version": "v1.8.4",
+      "badge": "Community Favorite",
+      "short_desc": "Deep structural dependency visualizer and architectural smell detector operating entirely air-gapped on local models.",
+      "image": "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwzfHxtaW5pbWFsJTIwdGVjaCUyMHNlcnZlciUyMGNvZGUlMjBzb2Z0d2FyZXxlbnwwfHx8fDE3OTAxODMzMzN8MA&ixlib=rb-4.1.0&q=85",
+      "compatibility": ["VS Code 1.85+", "IntelliJ IDEA 2024+", "NeoVim 0.10+"],
+      "tags": ["Air-Gapped", "IDE Plugin", "Local LLM", "AST Analyzer"]
+    },
+    {
+      "id": "stream-citus-sync",
+      "slug": "stream-citus-sync",
+      "title": "StreamSync Postgres // Change Data Capture Kernel",
+      "category": "Observability Add-ons",
+      "price": 129,
+      "enterprise_price": 490,
+      "rating": 4.95,
+      "reviews_count": 67,
+      "version": "v2.0.8",
+      "badge": "High Concurrency",
+      "short_desc": "Lockless WAL logical replication streamer delivering 450k events/sec straight into Apache Kafka & ClickHouse shards.",
+      "image": "https://images.unsplash.com/photo-1753998943413-8cba1b923c0e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHw0fHxjeWJlciUyMHNlY3VyaXR5JTIwZGV2ZWxvcGVyJTIwdGVybWluYWwlMjBkYXJrfGVufDB8fHx8MTc5MDE4MzMzM3ww&ixlib=rb-4.1.0&q=85",
+      "compatibility": ["PostgreSQL 14, 15, 16", "Citus 12+", "Neon Cloud"],
+      "tags": ["CDC", "Postgres", "Kafka", "WAL Streaming"]
+    },
+    {
+      "id": "apex-wasm-runtime",
+      "slug": "apex-wasm-runtime",
+      "title": "ApexWasm // Edge Micro-Container Virtualizer",
+      "category": "Architecture Runtimes",
+      "price": 169,
+      "enterprise_price": 640,
+      "rating": 4.91,
+      "reviews_count": 52,
+      "version": "v1.4.0",
+      "badge": "Cold-Start <1ms",
+      "short_desc": "Micro-virtualized sandboxed runtime with instantaneous 350-microsecond cold boot times for distributed edge compute.",
+      "image": "https://images.unsplash.com/photo-1684503830683-108f3e0fd03f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwyfHxtaW5pbWFsJTIwYWJzdHJhY3QlMjBkYXJrJTIwdGVjaG5vbG9neSUyMGdyaWQlMjAzZHxlbnwwfHx8fDE3OTAxODMzNDJ8MA&ixlib=rb-4.1.0&q=85",
+      "compatibility": ["Cloudflare Workers", "Fastly Compute", "Self-Hosted Edge"],
+      "tags": ["WASM", "Serverless", "Edge", "Sandboxing"]
+    }
+  ],
+  "image_urls": {
+    "hero_abstract_mesh": "https://images.unsplash.com/photo-1640904422940-f3070d65ae29?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHw0fHxtaW5pbWFsJTIwYWJzdHJhY3QlMjBkYXJrJTIwdGVjaG5vbG9neSUyMGdyaWQlMjAzZHxlbnwwfHx8fDE3OTAxODMzNDJ8MA&ixlib=rb-4.1.0&q=85",
+    "terminal_workspace_dark": "https://images.unsplash.com/photo-1562813733-b31f71025d54?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHwxfHxjeWJlciUyMHNlY3VyaXR5JTIwZGV2ZWxvcGVyJTIwdGVybWluYWwlMjBkYXJrfGVufDB8fHx8MTc5MDE4MzMzM3ww&ixlib=rb-4.1.0&q=85",
+    "software_architecture_code": "https://images.unsplash.com/photo-1619410283995-43d9134e7656?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHw0fHxtaW5pbWFsJTIwdGVjaCUyMHNlcnZlciUyMGNvZGUlMjBzb2Z0d2FyZXxlbnwwfHx8fDE3OTAxODMzMzN8MA&ixlib=rb-4.1.0&q=85",
+    "multi_screen_setup": "https://images.pexels.com/photos/33349204/pexels-photo-33349204.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "code_detail_screen": "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwzfHxtaW5pbWFsJTIwdGVjaCUyMHNlcnZlciUyMGNvZGUlMjBzb2Z0d2FyZXxlbnwwfHx8fDE3OTAxODMzMzN8MA&ixlib=rb-4.1.0&q=85",
+    "cyber_security_monitor": "https://images.pexels.com/photos/5380664/pexels-photo-5380664.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "honeycomb_structure": "https://images.pexels.com/photos/26954236/pexels-photo-26954236.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "interactive_components": {
+    "low_poly_gecko_svg": "A custom crafted SVG component featuring 36 faceted geometric polygonal triangles with subtle vertex glow, interactive tilt on cursor move, and state indicator pulses.",
+    "kinetic_text_reveal": "Framer-motion staggered word and letter line reveals on first load with smooth damping.",
+    "live_pricing_calculator": "Dynamic license tier selector calculating volume discounts, multi-seat developer packs, and enterprise air-gap maintenance SLAs.",
+    "stripe_checkout_modal": "Realistic Stripe credit card interface with simulated processing state, success voucher generation, and download instant trigger.",
+    "cart_drawer": "Slide-over panel allowing direct quantity changes, promo coupon application, and instant checkout transition.",
+    "command_palette_cmdk": "Quick launcher triggered with Cmd+K / Ctrl+K allowing developers to search software products, copy license keys, or jump between docs."
+  },
+  "data_testid_conventions": {
+    "header_nav": "nav-header",
+    "theme_toggle": "theme-mode-toggle",
+    "cart_button": "cart-trigger-button",
+    "cart_drawer": "cart-slideover-drawer",
+    "product_card": "product-card-{id}",
+    "add_to_cart": "add-to-cart-button-{id}",
+    "checkout_button": "checkout-submit-button",
+    "license_tab": "account-tab-licenses",
+    "download_button": "download-asset-button-{id}",
+    "filter_category": "filter-category-{slug}",
+    "search_input": "product-catalog-search-input"
+  },
+  "instructions_to_main_agent": [
+    "Use JavaScript (.js and .jsx files) exclusively, matching the existing CRA configuration. Do NOT generate .tsx or TypeScript files.",
+    "Implement default dark mode (#090B0D) with an ultra-smooth switch to light mode via a ThemeContext or next-themes/Tailwind dark class.",
+    "Embed the official GeckoLabs brand mark: A faceted low-poly gecko SVG in dark-green/charcoal tones paired with 'GECKO LABS — SOFTWARE ENGINEERING & ARCHITECTURE'.",
+    "Ensure the hero section feels award-worthy: line-by-line kinetic reveal on load, mono architectural chapters (01 // COMPILED CORE), and subtle geometric grid background.",
+    "Include a slow editorial ribbon/marquee with technical stack benchmarks (eBPF, Rust, WASM, Envoy, Citus).",
+    "Ensure all pages are fully functional: Home, Products Catalog with interactive filters, Product Detail with license selector, persistent Cart & Checkout with realistic Stripe modal, Account Portal (Licenses, Orders, Downloads), Auth (Login/Register with 1-click demo accounts), and Support/Terms.",
+    "Provide immediate working demo data: users can purchase products, generate instant cryptographic keys, and download simulated .tar.gz / .zip packages in the Account portal.",
+    "Use Sonner for toasts upon adding to cart, applying promo codes, and copying license tokens.",
+    "Every key interactive element must have a role-based data-testid attribute for robust testing."
+  ]
+}
