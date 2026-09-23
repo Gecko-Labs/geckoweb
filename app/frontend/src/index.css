@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 210 40% 98%;
+        --foreground: 222 47% 11%;
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 160 84% 30%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 210 40% 94%;
+        --secondary-foreground: 222 47% 11%;
+        --muted: 210 40% 94%;
+        --muted-foreground: 215 16% 45%;
+        --accent: 210 40% 93%;
+        --accent-foreground: 222 47% 11%;
+        --destructive: 0 72% 45%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 214 24% 88%;
+        --input: 214 24% 82%;
+        --ring: 160 84% 30%;
+        --radius: 0.75rem;
+        --neon: 145 63% 32%;
+        --grid-line: rgba(15, 23, 42, 0.055);
+        --glass: rgba(255, 255, 255, 0.8);
+    }
+
+    .dark {
+        --background: 210 18% 4%;
+        --foreground: 210 20% 96%;
+        --card: 214 22% 8%;
+        --card-foreground: 210 20% 96%;
+        --popover: 214 22% 8%;
+        --popover-foreground: 210 20% 96%;
+        --primary: 160 84% 39%;
+        --primary-foreground: 150 60% 6%;
+        --secondary: 213 22% 13%;
+        --secondary-foreground: 210 20% 96%;
+        --muted: 213 22% 13%;
+        --muted-foreground: 220 10% 62%;
+        --accent: 213 22% 13%;
+        --accent-foreground: 210 20% 96%;
+        --destructive: 0 72% 51%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 214 18% 15%;
+        --input: 214 18% 20%;
+        --ring: 160 84% 39%;
+        --neon: 142 71% 45%;
+        --grid-line: rgba(255, 255, 255, 0.045);
+        --glass: rgba(14, 18, 23, 0.78);
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    html.lenis,
+    html.lenis body {
+        height: auto;
+    }
+
+    .lenis.lenis-smooth {
+        scroll-behavior: auto !important;
+    }
+
+    body {
+        @apply bg-background text-foreground font-sans antialiased;
+        transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    ::selection {
+        background: hsl(var(--primary) / 0.28);
+        color: hsl(var(--foreground));
+    }
+
+    :focus-visible {
+        outline: 2px solid hsl(var(--ring));
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: hsl(var(--background));
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: hsl(var(--secondary));
+        border-radius: 8px;
+        border: 2px solid hsl(var(--background));
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: hsl(var(--muted-foreground) / 0.5);
+    }
+}
+
+@layer components {
+    .blueprint-grid {
+        background-image:
+            linear-gradient(var(--grid-line) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+        background-size: 28px 28px;
+        mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 75%);
+        -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 30%, black 30%, transparent 75%);
+    }
+
+    .glass-panel {
+        background: var(--glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .text-gradient-neon {
+        background: linear-gradient(100deg, hsl(var(--primary)), hsl(var(--neon)));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+}
+
+@keyframes marquee-drift {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes status-pulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 hsl(var(--primary) / 0.5);
+    }
+    50% {
+        opacity: 0.75;
+        box-shadow: 0 0 0 5px hsl(var(--primary) / 0);
+    }
+}
+
+.animate-marquee {
+    animation: marquee-drift 46s linear infinite;
+}
+
+.marquee-paused:hover .animate-marquee {
+    animation-play-state: paused;
+}
+
+.animate-status-dot {
+    animation: status-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
