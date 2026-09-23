@@ -1,86 +1,96 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-    blocklist: ["overline"],
-    darkMode: ["class"],
-    content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-    "./public/index.html"
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
-        display: ['"Barlow Condensed"', '"Syne"', 'sans-serif'],
-        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
-      },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
-      },
-      colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        neon: 'hsl(var(--neon))',
-        gecko: {
-          deep: '#064E3B',
-          neon: '#22C55E',
-          emerald: '#10B981'
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))'
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))'
-        },
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))'
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))'
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))'
-        },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))'
-        }
-      },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' }
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' }
-        }
-      },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out'
-      }
-    }
-  },
-  plugins: [require("tailwindcss-animate")],
+/**
+ * GeckoWeb API client
+ *
+ * The backend URL can be configured with VITE_API_URL.
+ * Example:
+ * VITE_API_URL=http://localhost:8000
+ */
+
+const API_URL = (
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:8000"
+).replace(/\/+$/, "");
+
+async function request(path, options = {}) {
+  const token = localStorage.getItem("gecko_token");
+
+  const headers = new Headers(options.headers || {});
+
+  if (options.body && !(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers,
+  });
+
+  const contentType = response.headers.get("content-type") || "";
+  const data = contentType.includes("application/json")
+    ? await response.json()
+    : await response.text();
+
+  if (!response.ok) {
+    const message =
+      typeof data === "object" && data !== null
+        ? data.detail || data.message || "Erro na API."
+        : data || `Erro HTTP ${response.status}.`;
+
+    throw new Error(message);
+  }
+
+  return data;
+}
+
+export const api = {
+  get: (path, options = {}) =>
+    request(path, { ...options, method: "GET" }),
+
+  post: (path, body, options = {}) =>
+    request(path, {
+      ...options,
+      method: "POST",
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
+
+  put: (path, body, options = {}) =>
+    request(path, {
+      ...options,
+      method: "PUT",
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
+
+  patch: (path, body, options = {}) =>
+    request(path, {
+      ...options,
+      method: "PATCH",
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
+
+  delete: (path, options = {}) =>
+    request(path, { ...options, method: "DELETE" }),
+
+  request,
 };
+
+export function setAuthToken(token) {
+  if (token) {
+    localStorage.setItem("gecko_token", token);
+  } else {
+    localStorage.removeItem("gecko_token");
+  }
+}
+
+export function getAuthToken() {
+  return localStorage.getItem("gecko_token");
+}
+
+export function clearAuthToken() {
+  localStorage.removeItem("gecko_token");
+}
+
+export default api;
