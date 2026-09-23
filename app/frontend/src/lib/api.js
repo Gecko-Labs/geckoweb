@@ -7,9 +7,32 @@
  */
 
 const API_URL = (
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:8000"
+  import.meta.env.VITE_API_URL || "http://localhost:8000"
 ).replace(/\/+$/, "");
+
+export function apiError(error) {
+  if (!error) {
+    return "Erro desconhecido.";
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (error.detail) {
+    return error.detail;
+  }
+
+  if (error.message) {
+    return error.message;
+  }
+
+  if (error.error) {
+    return error.error;
+  }
+
+  return "Ocorreu um erro ao comunicar com a API.";
+}
 
 async function request(path, options = {}) {
   const token = localStorage.getItem("gecko_token");
@@ -30,6 +53,7 @@ async function request(path, options = {}) {
   });
 
   const contentType = response.headers.get("content-type") || "";
+
   const data = contentType.includes("application/json")
     ? await response.json()
     : await response.text();
@@ -40,7 +64,12 @@ async function request(path, options = {}) {
         ? data.detail || data.message || "Erro na API."
         : data || `Erro HTTP ${response.status}.`;
 
-    throw new Error(message);
+    const error = new Error(message);
+
+    error.status = response.status;
+    error.data = data;
+
+    throw error;
   }
 
   return data;
@@ -48,31 +77,46 @@ async function request(path, options = {}) {
 
 export const api = {
   get: (path, options = {}) =>
-    request(path, { ...options, method: "GET" }),
+    request(path, {
+      ...options,
+      method: "GET",
+    }),
 
   post: (path, body, options = {}) =>
     request(path, {
       ...options,
       method: "POST",
-      body: body instanceof FormData ? body : JSON.stringify(body),
+      body:
+        body instanceof FormData
+          ? body
+          : JSON.stringify(body),
     }),
 
   put: (path, body, options = {}) =>
     request(path, {
       ...options,
       method: "PUT",
-      body: body instanceof FormData ? body : JSON.stringify(body),
+      body:
+        body instanceof FormData
+          ? body
+          : JSON.stringify(body),
     }),
 
   patch: (path, body, options = {}) =>
     request(path, {
       ...options,
       method: "PATCH",
-      body: body instanceof FormData ? body : JSON.stringify(body),
+      body:
+        body instanceof FormData
+          ? body
+          : JSON.stringify(body),
     }),
 
   delete: (path, options = {}) =>
-    request(path, { ...options, method: "DELETE" }),
+    request(path, {
+      ...options,
+      method: "DELETE",
+    }),
 
   request,
 };
