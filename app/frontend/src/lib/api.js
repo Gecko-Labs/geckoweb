@@ -7,7 +7,7 @@
  */
 
 export const API_BASE = (
-  import.meta.env.VITE_API_URL || "http://localhost:8000"
+  import.meta.env.VITE_API_URL || "/api"
 ).replace(/\/+$/, "");
 
 const API_URL = API_BASE;
