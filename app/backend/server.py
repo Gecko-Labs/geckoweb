@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv(Path(__file__).parent / ".env")
+load_dotenv()
 
 import logging
 import os
@@ -40,7 +40,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup():
-    wait ensure_indexes()
+    await ensure_indexes()
     await seed_all()
     logger.info("GeckoLabs Store API pronta")
 
