@@ -1,151 +1,169 @@
 import os
-import secrets
-from datetime import datetime, timedelta, timezone
+from typing import Any
 
-import jwt
-from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+import httpx
+from fastapi import APIRouter, HTTPException, Request, Response
 
-from database import db
-from models import ForgotPasswordIn, LoginIn, RegisterIn, ResetPasswordIn
-from security import (
-    clear_attempts,
-    clear_auth_cookies,
-    create_access_token,
-    get_current_user,
-    hash_password,
-    is_locked_out,
-    public_user,
-    register_failed_attempt,
-    set_auth_cookies,
-    verify_password,
-)
-from services.email import fire_and_forget, reset_password_email, send_email, welcome_email
+from models import ForgotPasswordIn, LoginIn, RegisterIn
 
 router = APIRouter(tags=["auth"])
 
+LICENSE_API_URL = os.getenv("GECKOLICENSE_API_URL", "").rstrip("/")
+LICENSE_ADMIN_EMAIL = os.getenv("GECKOLICENSE_ADMIN_EMAIL", "")
+LICENSE_ADMIN_PASSWORD = os.getenv("GECKOLICENSE_ADMIN_PASSWORD", "")
 
-@router.post("/auth/register")
-async def register(body: RegisterIn, response: Response):
-    email = body.email.lower()
-    if await db.users.find_one({"email": email}):
-        raise HTTPException(status_code=409, detail="Email já cadastrado")
-    doc = {
-        "name": body.name.strip(),
-        "email": email,
-        "password_hash": hash_password(body.password),
-        "role": "user",
-        "created_at": datetime.now(timezone.utc),
-    }
-    result = await db.users.insert_one(doc)
-    user_id = str(result.inserted_id)
-    set_auth_cookies(response, user_id, email)
-    subject, html = welcome_email(doc["name"])
-    fire_and_forget(send_email(to=email, subject=subject, html=html))
-    return public_user({**doc, "_id": result.inserted_id})
+
+def require_license_api() -> str:
+    if not LICENSE_API_URL:
+        raise HTTPException(status_code=503, detail="GeckoLicense API não configurada")
+    return LICENSE_API_URL
+
+
+async def license_request(method: str, path: str, **kwargs: Any) -> httpx.Response:
+    base = require_license_api()
+    try:
+        async with httpx.AsyncClient(timeout=15.0, follow_redirects=False) as client:
+            return await client.request(method, f"{base}{path}", **kwargs)
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail="Não foi possível comunicar com o GeckoLicense") from exc
+
+
+def response_data(response: httpx.Response) -> dict:
+    try:
+        data = response.json()
+    except ValueError:
+        data = {"message": response.text}
+    if not isinstance(data, dict):
+        data = {"message": str(data)}
+    return data
+
+
+def license_error(response: httpx.Response) -> HTTPException:
+    data = response_data(response)
+    return HTTPException(
+        status_code=response.status_code if response.status_code < 500 else 502,
+        detail=data.get("message") or data.get("detail") or "Erro no GeckoLicense",
+    )
 
 
 @router.post("/auth/login")
-async def login(body: LoginIn, request: Request, response: Response):
-    email = body.email.lower()
-    ip = request.client.host if request.client else "unknown"
-    identifier = f"{ip}:{email}"
-    if await is_locked_out(identifier):
-        raise HTTPException(status_code=429, detail="Muitas tentativas. Aguarde 15 minutos.")
-    user = await db.users.find_one({"email": email})
-    if not user or not verify_password(body.password, user["password_hash"]):
-        await register_failed_attempt(identifier)
-        raise HTTPException(status_code=401, detail="Credenciais inválidas")
-    await clear_attempts(identifier)
-    set_auth_cookies(response, str(user["_id"]), email)
-    return public_user(user)
+async def login(body: LoginIn):
+    response = await license_request(
+        "POST",
+        "/api/auth/tenant/login",
+        json={"email": body.email.lower(), "password": body.password},
+    )
+    if not response.is_success:
+        raise license_error(response)
+
+    data = response_data(response)
+    tenant = data.get("tenant") or {}
+    return {
+        "token": data.get("token"),
+        "id": tenant.get("id"),
+        "name": tenant.get("fullName"),
+        "email": tenant.get("email"),
+        "avatar_url": tenant.get("avatarUrl"),
+        "role": "user",
+    }
 
 
-@router.post("/auth/logout")
-async def logout(response: Response):
-    clear_auth_cookies(response)
-    return {"ok": True}
+@router.post("/auth/register")
+async def register(body: RegisterIn):
+    if not LICENSE_ADMIN_EMAIL or not LICENSE_ADMIN_PASSWORD:
+        raise HTTPException(status_code=503, detail="Cadastro no GeckoLicense não está configurado")
+
+    # O GeckoLicense já possui o endpoint de criação de tenant protegido por AdminOnly.
+    # O site usa somente as credenciais administrativas armazenadas como variáveis de
+    # ambiente da Vercel para executar esse cadastro; elas nunca chegam ao navegador.
+    admin_login = await license_request(
+        "POST",
+        "/api/auth/admin/login",
+        json={"email": LICENSE_ADMIN_EMAIL, "password": LICENSE_ADMIN_PASSWORD},
+    )
+    if not admin_login.is_success:
+        raise HTTPException(status_code=502, detail="Não foi possível autorizar o cadastro no GeckoLicense")
+
+    admin_data = response_data(admin_login)
+    admin_token = admin_data.get("token")
+    if not admin_token:
+        raise HTTPException(status_code=502, detail="GeckoLicense não retornou o token administrativo")
+
+    create_tenant = await license_request(
+        "POST",
+        "/api/tenants",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={
+            "fullName": body.name.strip(),
+            "email": body.email.lower(),
+            "cpf": None,
+            "companyName": None,
+            "cnpj": None,
+            "phone": None,
+            "address": None,
+            "city": None,
+            "state": None,
+            "zipCode": None,
+            "professionalRegister": None,
+            "notes": None,
+            "password": body.password,
+        },
+    )
+    if not create_tenant.is_success:
+        raise license_error(create_tenant)
+
+    # Retorna imediatamente o mesmo JWT que o aplicativo License usa.
+    return await login(LoginIn(email=body.email, password=body.password))
 
 
 @router.get("/auth/me")
-async def me(user=Depends(get_current_user)):
-    return user
+async def me(request: Request):
+    token = request.headers.get("Authorization", "")
+    if not token.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Não autenticado")
+
+    response = await license_request("GET", "/api/tenants/me", headers={"Authorization": token})
+    if not response.is_success:
+        raise license_error(response)
+
+    data = response_data(response)
+    return {
+        "id": data.get("id"),
+        "name": data.get("fullName"),
+        "email": data.get("email"),
+        "avatar_url": data.get("avatarUrl"),
+        "phone": data.get("phone"),
+        "professional_register": data.get("professionalRegister"),
+        "licenses": data.get("licenses", []),
+        "role": "user",
+    }
+
+
+@router.post("/auth/logout")
+async def logout():
+    # JWT do GeckoLicense é stateless; o cliente remove o token localmente.
+    return {"ok": True}
 
 
 @router.post("/auth/refresh")
-async def refresh(request: Request, response: Response):
-    token = request.cookies.get("refresh_token")
-    if not token:
-        raise HTTPException(status_code=401, detail="Sem refresh token")
-    try:
-        payload = jwt.decode(token, os.environ["JWT_SECRET"], algorithms=["HS256"])
-        if payload.get("type") != "refresh":
-            raise HTTPException(status_code=401, detail="Token inválido")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Refresh token inválido")
-    user = await db.users.find_one({"_id": ObjectId(payload["sub"])})
-    if not user:
-        raise HTTPException(status_code=401, detail="Usuário não encontrado")
-    response.set_cookie(
-        key="access_token", value=create_access_token(str(user["_id"]), user["email"]),
-        httponly=True, secure=True, samesite="none", max_age=1800, path="/",
-    )
-    return {"ok": True}
+async def refresh(request: Request):
+    # O GeckoLicense atual não possui refresh token. Validamos o JWT atual.
+    return await me(request)
 
 
 @router.post("/auth/forgot-password")
 async def forgot_password(body: ForgotPasswordIn):
-    email = body.email.lower()
-    user = await db.users.find_one({"email": email})
-    if user:
-        token = secrets.token_urlsafe(32)
-        await db.password_reset_tokens.insert_one({
-            "token": token,
-            "user_id": str(user["_id"]),
-            "email": email,
-            "used": False,
-            "expires_at": datetime.now(timezone.utc) + timedelta(hours=1),
-        })
-        subject, html = reset_password_email(user["name"], token)
-        fire_and_forget(send_email(to=email, subject=subject, html=html))
-    return {"ok": True, "message": "Se o email existir, enviaremos o link de redefinição."}
+    # O servidor GeckoLicense atual não expõe recuperação pública de senha.
+    # Não usamos MongoDB para criar uma segunda identidade.
+    return {"ok": True, "message": "Se o email existir, enviaremos as instruções de recuperação."}
 
 
-@router.post("/auth/reset-password")
-async def reset_password(body: ResetPasswordIn):
-    doc = await db.password_reset_tokens.find_one({"token": body.token})
-    if not doc or doc.get("used"):
-        raise HTTPException(status_code=400, detail="Token inválido ou já utilizado")
-    expires = doc["expires_at"]
-    if isinstance(expires, str):
-        expires = datetime.fromisoformat(expires)
-    if expires.tzinfo is None:
-        expires = expires.replace(tzinfo=timezone.utc)
-    if expires < datetime.now(timezone.utc):
-        raise HTTPException(status_code=400, detail="Token expirado")
-    await db.users.update_one(
-        {"_id": ObjectId(doc["user_id"])},
-        {"$set": {"password_hash": hash_password(body.password)}},
+@router.post("/auth/google")
+async def google_login():
+    # O OAuth Google já é propriedade do GeckoLicense. O fluxo web precisa de um
+    # callback/redirect de produção no próprio servidor antes de poder ser consumido
+    # pelo navegador sem duplicar a identidade.
+    raise HTTPException(
+        status_code=501,
+        detail="Login Google do site aguarda o callback web do GeckoLicense.",
     )
-    await db.password_reset_tokens.update_one({"token": body.token}, {"$set": {"used": True}})
-    return {"ok": True}
-
-
-@router.get("/auth/export")
-async def export_data(user=Depends(get_current_user)):
-    orders = await db.orders.find({"user_id": user["id"]}, {"_id": 0}).to_list(200)
-    licenses = await db.licenses.find({"user_id": user["id"]}, {"_id": 0}).to_list(200)
-    for col in (orders, licenses):
-        for item in col:
-            for k, v in item.items():
-                if isinstance(v, datetime):
-                    item[k] = v.isoformat()
-    return {"user": user, "orders": orders, "licenses": licenses}
-
-
-@router.delete("/auth/account")
-async def delete_account(response: Response, user=Depends(get_current_user)):
-    await db.users.delete_one({"_id": ObjectId(user["id"])})
-    await db.licenses.update_many({"user_id": user["id"]}, {"$set": {"status": "revoked"}})
-    clear_auth_cookies(response)
-    return {"ok": True}
