@@ -13,3 +13,4 @@ __pycache__/
 problems.txt
 .vs/
 .claude
+app/backend/.env
