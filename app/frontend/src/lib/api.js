@@ -3,9 +3,9 @@
  *
  * The backend URL can be configured with VITE_API_URL.
  * Example:
- * VITE_API_URL=http://localhost:8000
- */
+ **/
 
+  VITE_API_URL=https://geckolabsdev.duckdns.org/api
 export const API_BASE = (
   import.meta.env.VITE_API_URL || "/api"
 ).replace(/\/+$/, "");
@@ -74,7 +74,7 @@ async function request(path, options = {}) {
     throw error;
   }
 
-  return data;
+  return { data, status: response.status };
 }
 
 export const api = {
