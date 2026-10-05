@@ -19,7 +19,7 @@ export default function ResetPasswordPage() {
     setError("");
     setLoading(true);
     try {
-      await api.post("/auth/reset-password", { token, password });
+      await api.post("/auth/tenant/reset-password", { token, password });
       setDone(true);
       toast.success("Senha redefinida com sucesso");
     } catch (err) {
