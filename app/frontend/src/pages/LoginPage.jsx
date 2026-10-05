@@ -38,7 +38,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/auth/forgot-password", { email });
+      await api.post("/auth/tenant/forgot-password", { email });
       setForgotSent(true);
     } catch (err) {
       toast.error(apiError(err));
