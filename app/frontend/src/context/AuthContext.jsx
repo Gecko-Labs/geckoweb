@@ -4,13 +4,16 @@ import { api, clearAuthToken, setAuthToken } from "../lib/api";
 
 const AuthContext = createContext(null);
 
+// A API devolve fullName; o resto do app usa user.name
+const normalizeUser = (u) => (u ? { ...u, name: u.fullName ?? u.name } : u);
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined); // undefined = verificando, null = visitante
 
   const refresh = useCallback(async () => {
     try {
       const { data } = await api.get("/auth/me");
-      setUser(data);
+      setUser(normalizeUser(data));
     } catch {
       clearAuthToken();
       setUser(null);
@@ -22,28 +25,31 @@ export function AuthProvider({ children }) {
   }, [refresh]);
 
   const login = useCallback(async (email, password) => {
-    const { data } = await api.post("/auth/login", { email, password });
+    const { data } = await api.post("/auth/tenant/login", { email, password });
     setAuthToken(data.token);
-    const { data: currentUser } = await api.get("/auth/me");
+    const { data: me } = await api.get("/auth/me");
+    const currentUser = normalizeUser(me);
     setUser(currentUser);
     return currentUser;
   }, []);
 
   const register = useCallback(async (name, email, password) => {
-    const { data } = await api.post("/auth/register", { name, email, password });
+    const { data } = await api.post("/auth/tenant/register", {
+      fullName: name,
+      email,
+      password,
+    });
     setAuthToken(data.token);
-    const { data: currentUser } = await api.get("/auth/me");
+    const { data: me } = await api.get("/auth/me");
+    const currentUser = normalizeUser(me);
     setUser(currentUser);
     return currentUser;
   }, []);
 
+  // JWT sem sessão no servidor: logout é só limpar o token local
   const logout = useCallback(async () => {
-    try {
-      await api.post("/auth/logout");
-    } finally {
-      clearAuthToken();
-      setUser(null);
-    }
+    clearAuthToken();
+    setUser(null);
   }, []);
 
   return (
