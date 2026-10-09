@@ -13,6 +13,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useI18n } from "../context/I18nContext";
+
 import { GeckoMark } from "./GeckoMark";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSwitcher } from "./LocaleSwitcher";
@@ -25,33 +27,34 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-const LINKS = [
-  {
-    to: "/products",
-    label: "Produtos",
-    testid: "nav-link-products",
-  },
-  {
-    to: "/#ecossistema",
-    label: "Ecossistema",
-    testid: "nav-link-ecosystem",
-    anchor: true,
-  },
-  {
-    to: "/support",
-    label: "Suporte",
-    testid: "nav-link-support",
-  },
-];
-
 export function Navbar() {
   const { user, logout } = useAuth();
   const { count, setDrawerOpen } = useCart();
+  const { t } = useI18n();
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navigate = useNavigate();
+
+  const links = [
+    {
+      to: "/products",
+      label: t("navbar.products"),
+      testid: "nav-link-products",
+    },
+    {
+      to: "/#ecossistema",
+      label: t("navbar.ecosystem", "Ecossistema"),
+      testid: "nav-link-ecosystem",
+      anchor: true,
+    },
+    {
+      to: "/support",
+      label: t("navbar.support", "Suporte"),
+      testid: "nav-link-support",
+    },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -86,7 +89,7 @@ export function Navbar() {
     >
       <nav
         className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
-        aria-label="Navegação principal"
+        aria-label={t("navbar.mainNavigation", "Navegação principal")}
       >
         <Link
           to="/"
@@ -107,7 +110,7 @@ export function Navbar() {
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
-          {LINKS.map((link) =>
+          {links.map((link) =>
             link.anchor ? (
               <a
                 key={link.to}
@@ -139,7 +142,7 @@ export function Navbar() {
             type="button"
             onClick={() => setDrawerOpen(true)}
             data-testid="cart-trigger-button"
-            aria-label={`Abrir carrinho, ${count} itens`}
+            aria-label={`${t("navbar.openCart", "Abrir carrinho")}, ${count} ${t("navbar.items", "itens")}`}
             className="relative flex h-9 w-9 items-center justify-center rounded-md border border-border/70 text-muted-foreground transition-colors duration-200 hover:border-primary/50 hover:text-foreground"
           >
             <ShoppingCart className="h-4 w-4" />
@@ -160,7 +163,7 @@ export function Navbar() {
                 <button
                   type="button"
                   data-testid="nav-user-menu"
-                  aria-label="Menu da conta"
+                  aria-label={t("navbar.accountMenu", "Menu da conta")}
                   className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 font-mono text-xs font-bold uppercase text-primary transition-colors hover:bg-primary/20"
                 >
                   {user.name.slice(0, 2)}
@@ -187,7 +190,7 @@ export function Navbar() {
                     className="cursor-pointer"
                   >
                     <UserIcon className="mr-2 h-4 w-4" />
-                    Minha conta
+                    {t("navbar.myAccount")}
                   </Link>
                 </DropdownMenuItem>
 
@@ -197,7 +200,7 @@ export function Navbar() {
                     className="cursor-pointer"
                   >
                     <Package className="mr-2 h-4 w-4" />
-                    Pedidos
+                    {t("navbar.orders")}
                   </Link>
                 </DropdownMenuItem>
 
@@ -209,7 +212,7 @@ export function Navbar() {
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sair
+                  {t("common.logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -220,7 +223,7 @@ export function Navbar() {
                 data-testid="nav-login-button"
                 className="rounded-md px-3.5 py-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                Entrar
+                {t("common.login")}
               </Link>
 
               <Link
@@ -228,16 +231,20 @@ export function Navbar() {
                 data-testid="nav-register-button"
                 className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
               >
-                Criar conta
+                {t("common.register")}
               </Link>
             </div>
           )}
 
           <button
             type="button"
-            onClick={() => setMobileOpen((v) => !v)}
+            onClick={() => setMobileOpen((value) => !value)}
             data-testid="mobile-menu-button"
-            aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
+            aria-label={
+              mobileOpen
+                ? t("navbar.closeMenu")
+                : t("navbar.openMenu")
+            }
             aria-expanded={mobileOpen}
             className="flex h-9 w-9 items-center justify-center rounded-md border border-border/70 text-muted-foreground md:hidden"
           >
@@ -261,7 +268,7 @@ export function Navbar() {
             data-testid="mobile-menu-panel"
           >
             <div className="flex flex-col gap-1 px-4 py-4">
-              {LINKS.map((link) => (
+              {links.map((link) => (
                 <Link
                   key={link.to}
                   to={link.anchor ? "/" : link.to}
@@ -279,7 +286,7 @@ export function Navbar() {
                     onClick={() => setMobileOpen(false)}
                     className="rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
                   >
-                    Entrar
+                    {t("common.login")}
                   </Link>
 
                   <Link
@@ -287,8 +294,40 @@ export function Navbar() {
                     onClick={() => setMobileOpen(false)}
                     className="mt-1 rounded-md bg-primary px-3 py-2.5 text-center text-sm font-semibold text-primary-foreground"
                   >
-                    Criar conta
+                    {t("common.register")}
                   </Link>
+                </>
+              )}
+
+              {user && (
+                <>
+                  <Link
+                    to="/account"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
+                  >
+                    {t("navbar.myAccount")}
+                  </Link>
+
+                  <Link
+                    to="/account?tab=orders"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
+                  >
+                    {t("navbar.orders")}
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setMobileOpen(false);
+                      await handleLogout();
+                    }}
+                    className="flex items-center rounded-md px-3 py-2.5 text-left text-sm text-destructive hover:bg-secondary"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {t("common.logout")}
+                  </button>
                 </>
               )}
             </div>
