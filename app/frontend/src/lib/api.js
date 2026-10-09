@@ -1,10 +1,12 @@
+
 /**
  * GeckoWeb API client
  *
- * The backend URL can be configured with VITE_API_URL.
- * Example:
- **/
-//VITE_API_URL=https://geckolabsdev.duckdns.org/api
+ * A URL da API pode ser configurada por VITE_API_URL.
+ *
+ * Exemplo:
+ * VITE_API_URL=https://geckolabsdev.duckdns.org/api
+ */
 
 export const API_BASE = (
   import.meta.env.VITE_API_URL || "/api"
@@ -38,10 +40,13 @@ export function apiError(error) {
 
 async function request(path, options = {}) {
   const token = localStorage.getItem("gecko_token");
-
   const headers = new Headers(options.headers || {});
 
-  if (options.body && !(options.body instanceof FormData)) {
+  if (
+    options.body &&
+    !(options.body instanceof FormData) &&
+    !headers.has("Content-Type")
+  ) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -56,25 +61,33 @@ async function request(path, options = {}) {
 
   const contentType = response.headers.get("content-type") || "";
 
-  const data = contentType.includes("application/json")
-    ? await response.json()
-    : await response.text();
+  let data;
+
+  if (response.status === 204) {
+    data = null;
+  } else if (contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    data = await response.text();
+  }
 
   if (!response.ok) {
     const message =
       typeof data === "object" && data !== null
-        ? data.detail || data.message || "Erro na API."
+        ? data.detail || data.message || data.error || "Erro na API."
         : data || `Erro HTTP ${response.status}.`;
 
     const error = new Error(message);
-
     error.status = response.status;
     error.data = data;
 
     throw error;
   }
 
-  return { data, status: response.status };
+  return {
+    data,
+    status: response.status,
+  };
 }
 
 export const api = {
