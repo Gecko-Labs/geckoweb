@@ -10,7 +10,7 @@ import "@/App.css";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
-import { I18nProvider } from "./context/I18nContext";
+import { I18nProvider } from "./lib/i18n";
 import { CurrencyProvider } from "./context/CurrencyContext";
 
 import { Navbar } from "./components/Navbar";
