@@ -1,7 +1,12 @@
 
 import { useEffect } from "react";
 
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 
 import Lenis from "lenis";
 
@@ -10,7 +15,7 @@ import "@/App.css";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
-import { I18nProvider } from "./lib/i18n";
+import { I18nProvider } from "./context/I18nContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 
 import { Navbar } from "./components/Navbar";
@@ -38,7 +43,9 @@ import NotFoundPage from "./pages/NotFoundPage";
 
 function useSmoothScroll() {
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       return undefined;
     }
 
