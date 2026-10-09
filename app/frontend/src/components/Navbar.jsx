@@ -13,7 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import { useI18n } from "../lib/i18n";
+import { useI18n } from "../context/I18nContext";
 
 import { GeckoMark } from "./GeckoMark";
 import { ThemeToggle } from "./ThemeToggle";
