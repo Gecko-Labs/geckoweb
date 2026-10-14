@@ -10,6 +10,7 @@ import { useCart } from "../context/CartContext";
 import { formatUSD } from "../utils/format";
 import { FadeIn } from "../components/Reveal";
 import { Skeleton } from "../components/ui/skeleton";
+import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
 import {
   Accordion,
   AccordionContent,
