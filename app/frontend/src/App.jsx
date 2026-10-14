@@ -1,6 +1,4 @@
-
 import { useEffect } from "react";
-import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
 
 import {
   BrowserRouter,
