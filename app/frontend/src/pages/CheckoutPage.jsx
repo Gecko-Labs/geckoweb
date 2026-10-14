@@ -8,6 +8,8 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { formatUSD } from "../utils/format";
 import { FadeIn } from "../components/Reveal";
+import { toCheckoutItem } from "../lib/products";
+import { useCurrency } from "../lib/currency"
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -17,11 +19,11 @@ export default function CheckoutPage() {
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const { data } = await api.post("/checkout", {
-        items: items.map((i) => ({ slug: i.slug, tier: i.tier })),
-        promo_code: promo?.code || null,
-        origin_url: window.location.origin,
-      });
+     const { data } = await api.post("/checkout/create-session", {
+      items: items.map(toCheckoutItem),   // `items` = a lista do carrinho (useCart)
+      currency: currency.toLowerCase(),
+      promo: promo?.code,});
+window.location.href = data.checkoutUrl;
       window.location.href = data.checkout_url;
     } catch (err) {
       toast.error(apiError(err, "Não foi possível iniciar o pagamento"));
