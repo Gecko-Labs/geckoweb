@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { ProductCard } from "../components/ProductCard";
 import { SectionHeading } from "../components/SectionHeading";
 import { Skeleton } from "../components/ui/skeleton";
+import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
 import {
   Select,
   SelectContent,
