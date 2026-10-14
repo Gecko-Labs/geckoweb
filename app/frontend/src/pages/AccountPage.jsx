@@ -7,6 +7,7 @@ import { FadeIn } from "../components/Reveal";
 import { formatDate, formatUSD } from "../utils/format";
 import { Skeleton } from "../components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
 import {
   AlertDialog,
   AlertDialogAction,
