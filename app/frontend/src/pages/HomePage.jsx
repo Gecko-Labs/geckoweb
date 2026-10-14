@@ -3,6 +3,7 @@ import { ArrowRight, Code2, ShieldCheck, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { ProductCard } from "../components/ProductCard";
+import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
