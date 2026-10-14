@@ -58,6 +58,8 @@ const translations = {
       closeMenu: "Fechar menu",
       language: "Idioma",
       currency: "Moeda",
+      ecosystem: "Ecossistema",
+      support: "Suporte",
     },
 
     home: {
@@ -84,6 +86,35 @@ const translations = {
       ctaDescription:
         "Conheça nossas soluções e descubra o que podemos fazer pelo seu negócio.",
       ctaButton: "Conhecer soluções",
+
+      hero: {
+        title: "Software construído para criar mais.",
+        description:
+          "Ferramentas profissionais, licenças digitais e produtos desenvolvidos pela Gecko Labs.",
+        productsButton: "Ver softwares",
+        supportButton: "Suporte",
+      },
+
+      features: {
+        fast: {
+          title: "Rápido",
+          description: "Ferramentas focadas em fluxo de trabalho.",
+        },
+        licensed: {
+          title: "Licenciado",
+          description: "Entrega e gerenciamento de licenças.",
+        },
+        professional: {
+          title: "Profissional",
+          description: "Software desenvolvido para produção real.",
+        },
+      },
+
+      featuredSection: {
+        eyebrow: "CATÁLOGO",
+        title: "Produtos em destaque",
+        viewAll: "Ver todos",
+      },
     },
 
     products: {
@@ -108,7 +139,8 @@ const translations = {
       title: "Meu carrinho",
       subtitle: "Confira os produtos antes de continuar.",
       empty: "Seu carrinho está vazio.",
-      emptyDescription: "Explore nossos produtos e adicione algo ao carrinho.",
+      emptyDescription:
+        "Explore nossos produtos e adicione algo ao carrinho.",
       continueShopping: "Continuar comprando",
       product: "Produto",
       quantity: "Quantidade",
@@ -137,7 +169,8 @@ const translations = {
       cancel: "Pagamento cancelado",
       cancelDescription: "Seu pagamento não foi concluído.",
       error: "Não foi possível iniciar o pagamento.",
-      emptyCart: "Adicione produtos ao carrinho antes de finalizar a compra.",
+      emptyCart:
+        "Adicione produtos ao carrinho antes de finalizar a compra.",
     },
 
     auth: {
@@ -222,8 +255,10 @@ const translations = {
       generic: "Algo deu errado. Tente novamente.",
       network: "Erro de conexão. Verifique sua internet.",
       notFound: "A página que você procura não foi encontrada.",
-      unauthorized: "Você precisa entrar na sua conta para continuar.",
-      forbidden: "Você não tem permissão para acessar este recurso.",
+      unauthorized:
+        "Você precisa entrar na sua conta para continuar.",
+      forbidden:
+        "Você não tem permissão para acessar este recurso.",
       validation: "Verifique os dados informados.",
     },
   },
@@ -286,6 +321,8 @@ const translations = {
       closeMenu: "Close menu",
       language: "Language",
       currency: "Currency",
+      ecosystem: "Ecosystem",
+      support: "Support",
     },
 
     home: {
@@ -312,6 +349,35 @@ const translations = {
       ctaDescription:
         "Explore our solutions and discover what we can do for your business.",
       ctaButton: "Explore solutions",
+
+      hero: {
+        title: "Software built to create more.",
+        description:
+          "Professional tools, digital licenses, and products developed by Gecko Labs.",
+        productsButton: "Explore software",
+        supportButton: "Support",
+      },
+
+      features: {
+        fast: {
+          title: "Fast",
+          description: "Tools designed for efficient workflows.",
+        },
+        licensed: {
+          title: "Licensed",
+          description: "License delivery and management.",
+        },
+        professional: {
+          title: "Professional",
+          description: "Software built for real-world production.",
+        },
+      },
+
+      featuredSection: {
+        eyebrow: "CATALOG",
+        title: "Featured products",
+        viewAll: "View all",
+      },
     },
 
     products: {
@@ -336,7 +402,8 @@ const translations = {
       title: "My cart",
       subtitle: "Review your products before continuing.",
       empty: "Your cart is empty.",
-      emptyDescription: "Explore our products and add something to your cart.",
+      emptyDescription:
+        "Explore our products and add something to your cart.",
       continueShopping: "Continue shopping",
       product: "Product",
       quantity: "Quantity",
@@ -436,8 +503,7 @@ const translations = {
     },
 
     footer: {
-      description:
-        "Technology and solutions to turn ideas into results.",
+      description: "Technology and solutions to turn ideas into results.",
       quickLinks: "Quick links",
       contact: "Contact",
       followUs: "Follow us",
@@ -458,4 +524,3 @@ const translations = {
 };
 
 export default translations;
-
