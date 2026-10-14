@@ -1,9 +1,11 @@
+let moneyCfg = { currency: "BRL", usdPerBrl: 0.18 };
+export const setMoneyConfig = (cfg) => { moneyCfg = { ...moneyCfg, ...cfg }; };
+
 export function formatUSD(cents) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "USD",
-    currencyDisplay: "narrowSymbol",
-  }).format((cents || 0) / 100);
+  const brl = (cents ?? 0) / 100;
+  return moneyCfg.currency === "USD"
+    ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(brl * moneyCfg.usdPerBrl)
+    : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(brl);
 }
 
 export function formatDate(value) {
