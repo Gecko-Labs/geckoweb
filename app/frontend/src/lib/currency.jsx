@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { api } from "./api";
 import { useI18n } from "./i18n";
+import { setMoneyConfig } from "../utils/format";
 
 const CurrencyContext = createContext(null);
 
@@ -37,3 +38,7 @@ export function CurrencyProvider({ children }) {
 }
 
 export const useCurrency = () => useContext(CurrencyContext);
+export function MoneyBoundary({ children }) {
+  const { currency, usdPerBrl } = useCurrency();
+  return <Fragment key={`${currency}-${usdPerBrl}`}>{children}</Fragment>;
+}
