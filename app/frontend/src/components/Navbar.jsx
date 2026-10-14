@@ -40,18 +40,18 @@ export function Navbar() {
   const links = [
     {
       to: "/products",
-      label: t("nav.products"),
+      label: t("navbar.products", "Produtos"),
       testid: "nav-link-products",
     },
     {
       to: "/#ecossistema",
-      label: t("nav.ecosystem", "Ecossistema"),
+      label: t("navbar.ecosystem", "Ecossistema"),
       testid: "nav-link-ecosystem",
       anchor: true,
     },
     {
       to: "/support",
-      label: t("nav.support"),
+      label: t("navbar.support", "Suporte"),
       testid: "nav-link-support",
     },
   ];
@@ -81,6 +81,8 @@ export function Navbar() {
 
   const closeMobileMenu = () => setMobileOpen(false);
 
+  const navLabel = (key, fallback) => t(`navbar.${key}`, fallback);
+
   return (
     <header
       data-testid="nav-header"
@@ -92,7 +94,7 @@ export function Navbar() {
     >
       <nav
         className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
-        aria-label={t("nav.mainNavigation", "Navegação principal")}
+        aria-label={navLabel("mainNavigation", "Navegação principal")}
       >
         <Link
           to="/"
@@ -139,14 +141,13 @@ export function Navbar() {
 
         <div className="flex items-center gap-2.5">
           <ThemeToggle />
-
           <LocaleSwitcher />
 
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
             data-testid="cart-trigger-button"
-            aria-label={`${t("nav.cart", "Carrinho")}, ${count} ${t("nav.items", "itens")}`}
+            aria-label={`${navLabel("cart", "Carrinho")}, ${count} ${navLabel("items", "itens")}`}
             className="relative flex h-9 w-9 items-center justify-center rounded-md border border-border/70 text-muted-foreground transition-colors duration-200 hover:border-primary/50 hover:text-foreground"
           >
             <ShoppingCart className="h-4 w-4" />
@@ -167,10 +168,12 @@ export function Navbar() {
                 <button
                   type="button"
                   data-testid="nav-user-menu"
-                  aria-label={t("nav.account", "Minha conta")}
+                  aria-label={navLabel("account", "Minha conta")}
                   className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 font-mono text-xs font-bold uppercase text-primary transition-colors hover:bg-primary/20"
                 >
-                  {user.name?.slice(0, 2) || <UserIcon className="h-4 w-4" />}
+                  {user.name?.slice(0, 2) || (
+                    <UserIcon className="h-4 w-4" />
+                  )}
                 </button>
               </DropdownMenuTrigger>
 
@@ -194,7 +197,7 @@ export function Navbar() {
                     className="cursor-pointer"
                   >
                     <UserIcon className="mr-2 h-4 w-4" />
-                    {t("nav.account", "Minha conta")}
+                    {navLabel("account", "Minha conta")}
                   </Link>
                 </DropdownMenuItem>
 
@@ -204,7 +207,7 @@ export function Navbar() {
                     className="cursor-pointer"
                   >
                     <Package className="mr-2 h-4 w-4" />
-                    {t("nav.orders", "Meus pedidos")}
+                    {navLabel("orders", "Meus pedidos")}
                   </Link>
                 </DropdownMenuItem>
 
@@ -216,7 +219,7 @@ export function Navbar() {
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  {t("nav.logout", "Sair")}
+                  {navLabel("logout", "Sair")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -227,7 +230,7 @@ export function Navbar() {
                 data-testid="nav-login-button"
                 className="rounded-md px-3.5 py-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
-                {t("nav.login")}
+                {navLabel("login", "Entrar")}
               </Link>
 
               <Link
@@ -235,7 +238,7 @@ export function Navbar() {
                 data-testid="nav-register-button"
                 className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
               >
-                {t("nav.register")}
+                {navLabel("register", "Criar conta")}
               </Link>
             </div>
           )}
@@ -246,8 +249,8 @@ export function Navbar() {
             data-testid="mobile-menu-button"
             aria-label={
               mobileOpen
-                ? t("nav.closeMenu", "Fechar menu")
-                : t("nav.openMenu", "Abrir menu")
+                ? navLabel("closeMenu", "Fechar menu")
+                : navLabel("openMenu", "Abrir menu")
             }
             aria-expanded={mobileOpen}
             className="flex h-9 w-9 items-center justify-center rounded-md border border-border/70 text-muted-foreground md:hidden"
@@ -290,7 +293,7 @@ export function Navbar() {
                     onClick={closeMobileMenu}
                     className="rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
                   >
-                    {t("nav.login")}
+                    {navLabel("login", "Entrar")}
                   </Link>
 
                   <Link
@@ -298,7 +301,7 @@ export function Navbar() {
                     onClick={closeMobileMenu}
                     className="mt-1 rounded-md bg-primary px-3 py-2.5 text-center text-sm font-semibold text-primary-foreground"
                   >
-                    {t("nav.register")}
+                    {navLabel("register", "Criar conta")}
                   </Link>
                 </>
               )}
@@ -310,7 +313,7 @@ export function Navbar() {
                     onClick={closeMobileMenu}
                     className="rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
                   >
-                    {t("nav.account", "Minha conta")}
+                    {navLabel("account", "Minha conta")}
                   </Link>
 
                   <Link
@@ -318,7 +321,7 @@ export function Navbar() {
                     onClick={closeMobileMenu}
                     className="rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
                   >
-                    {t("nav.orders", "Meus pedidos")}
+                    {navLabel("orders", "Meus pedidos")}
                   </Link>
 
                   <button
@@ -327,7 +330,7 @@ export function Navbar() {
                     className="flex items-center rounded-md px-3 py-2.5 text-left text-sm text-destructive hover:bg-secondary"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    {t("nav.logout", "Sair")}
+                    {navLabel("logout", "Sair")}
                   </button>
                 </>
               )}
