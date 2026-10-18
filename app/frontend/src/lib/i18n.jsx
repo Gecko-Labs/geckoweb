@@ -8,7 +8,8 @@ const DICT = {
     "btn.save": "Salvar", "btn.cancel": "Cancelar", "btn.send": "Enviar",
     "cart.empty": "Seu carrinho está vazio.", "cart.total": "Total", "cart.subtotal": "Subtotal",
     "pay.success": "Pagamento aprovado", "pay.cancel": "Pagamento cancelado",
-    "auth.email": "E-mail", "auth.password": "Senha", "auth.forgot": "Esqueci minha senha",
+    "auth.email": "E-mail", "auth.password": "Senha", "auth.forgot": "Esqueci minha senha", 
+    "nav.download": "Baixar GeckoLicense",
   },
   en: {
     "nav.products": "Products", "nav.support": "Support", "nav.account": "My account",
@@ -18,6 +19,7 @@ const DICT = {
     "cart.empty": "Your cart is empty.", "cart.total": "Total", "cart.subtotal": "Subtotal",
     "pay.success": "Payment approved", "pay.cancel": "Payment cancelled",
     "auth.email": "Email", "auth.password": "Password", "auth.forgot": "Forgot my password",
+    "nav.download": "Download GeckoLicense",
   },
 };
 
