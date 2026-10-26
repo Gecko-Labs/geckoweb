@@ -1,17 +1,13 @@
-
 import { useEffect, useRef, useState } from "react";
-
 import { Link, useSearchParams } from "react-router-dom";
-
 import { CheckCircle2, Copy, Download, Loader2 } from "lucide-react";
-
 import { motion } from "framer-motion";
-
 import { toast } from "sonner";
 
 import { useCart } from "../context/CartContext";
 import { pollOrder } from "../lib/products";
 import { formatUSD, formatDate } from "../utils/format";
+import DownloadLauncherButton from "../components/DownloadLauncherButton";
 
 export default function PaymentSuccessPage() {
   const [params] = useSearchParams();
@@ -40,7 +36,6 @@ export default function PaymentSuccessPage() {
 
         setOrder(result);
 
-        // Ajuste conforme o formato retornado pela API.
         const paymentStatus =
           result?.payment_status ?? result?.status;
 
@@ -220,6 +215,20 @@ export default function PaymentSuccessPage() {
               ))}
             </div>
           )}
+
+          <div className="mt-8 rounded-xl border border-primary/30 bg-primary/5 p-5 text-left">
+            <p className="font-semibold">
+              Próximo passo: baixe o GeckoLicense
+            </p>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              Instale o launcher, entre com esta mesma conta e seus produtos aparecem lá, prontos para instalar.
+            </p>
+
+            <div className="mt-4">
+              <DownloadLauncherButton variant="primary" showInfo />
+            </div>
+          </div>
 
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link
