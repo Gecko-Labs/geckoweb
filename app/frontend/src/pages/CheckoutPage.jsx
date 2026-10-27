@@ -63,7 +63,11 @@ window.location.href = data.checkout_url ?? data.checkoutUrl;
                     Licença {item.tier === "enterprise" ? "Enterprise Vault" : "Standard Seat"}
                   </p>
                 </div>
-                <p className="font-mono text-base font-bold text-primary">{format(item.price)}</p>
+                <p className="font-mono text-base font-bold text-primary">
+                  {currency === "USD" && item.priceObj?.usd
+                    ? format(item.priceObj.usd)
+                    : formatConverted(item.price) ?? format(item.price)}
+                </p>
               </li>
             ))}
           </ul>
