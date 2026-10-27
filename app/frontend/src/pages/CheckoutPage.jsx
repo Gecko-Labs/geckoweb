@@ -23,8 +23,7 @@ export default function CheckoutPage() {
       items: items.map(toCheckoutItem),   // `items` = a lista do carrinho (useCart)
       currency: currency.toLowerCase(),
       promo: promo?.code,});
-window.location.href = data.checkoutUrl;
-      window.location.href = data.checkout_url;
+window.location.href = data.checkout_url ?? data.checkoutUrl;
     } catch (err) {
       toast.error(apiError(err, "Não foi possível iniciar o pagamento"));
       setLoading(false);
