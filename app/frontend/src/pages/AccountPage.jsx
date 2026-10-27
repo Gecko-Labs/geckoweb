@@ -231,7 +231,7 @@ export default function AccountPage() {
                           <span className="text-muted-foreground">
                             {item.name} <span className="font-mono text-[10px] uppercase">({item.tier})</span>
                           </span>
-                          <span className="font-mono text-xs">{formatUSD(item.unit_amount)}</span>
+                          <span className="font-mono text-xs">{format(item.unit_amount)}</span>
                         </li>
                       ))}
                     </ul>
