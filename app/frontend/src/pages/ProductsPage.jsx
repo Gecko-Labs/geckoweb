@@ -18,9 +18,9 @@ import {
 
 const PRICE_RANGES = [
   { value: "all", label: "Qualquer preço" },
-  { value: "under-100", label: "Até US$ 100" },
-  { value: "100-200", label: "US$ 100 – 200" },
-  { value: "over-200", label: "Acima de US$ 200" },
+  { value: "under-100", label: "Até R$ 100" },
+  { value: "100-200", label: "R$ 100 – 200" },
+  { value: "over-200", label: "Acima de R$ 200" },
 ];
 
 function inRange(priceCents, range) {
