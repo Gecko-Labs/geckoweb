@@ -23,6 +23,7 @@ export function CartProvider({ children }) {
   const addItem = useCallback((product, tier = "standard") => {
     setItems((prev) => {
       if (prev.some((i) => i.slug === product.slug && i.tier === tier)) return prev;
+      const priceObj = product.prices[tier] ?? {};
       return [
         ...prev,
         {
@@ -31,7 +32,9 @@ export function CartProvider({ children }) {
           name: product.name,
           tagline: product.tagline,
           image: product.image,
-          price: product.prices[tier],
+          price: priceObj.brl ?? priceObj.standard ?? 0,
+          priceUsd: priceObj.usd ?? null,
+          priceObj,
         },
       ];
     });
@@ -52,7 +55,7 @@ export function CartProvider({ children }) {
     setPromo(null);
   }, []);
 
-  const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price, 0), [items]);
+  const subtotal = useMemo(() => items.reduce((sum, i) => sum + (typeof i.price === "number" ? i.price : 0), 0), [items]);
   const discount = promo ? Math.round((subtotal * promo.percent) / 100) : 0;
   const total = subtotal - discount;
 
