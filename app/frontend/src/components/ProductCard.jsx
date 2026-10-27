@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
-import { Check, ShoppingCart, Star } from "lucide-react";
+import { Check, Download as DownloadIcon, ShoppingCart, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 import { useCart } from "../context/CartContext";
-import { formatUSD } from "../utils/format";
+import { useCurrency } from "../lib/currency";
 
 export function ProductCard({ product, owned = false, index = 0 }) {
   const { addItem, hasItem } = useCart();
+  const { format } = useCurrency();
   const inCart = hasItem(product.slug);
+  const isFree = product.billingModel === "free" || product.prices.standard === 0;
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -63,7 +65,7 @@ export function ProductCard({ product, owned = false, index = 0 }) {
               {product.rating} <span className="text-muted-foreground/60">({product.reviews_count})</span>
             </div>
             <p className="mt-1 font-display text-2xl font-bold tracking-tight">
-              {product.prices.standard === 0 ? "Grátis" : formatUSD(product.prices.standard)}
+              {isFree ? "Grátis" : format(product.prices.standard)}
             </p>
             {product.billingModel === "one-time" && (
               <span className="mt-0.5 font-mono text-[10px] text-primary/70 uppercase tracking-wider">
@@ -79,6 +81,15 @@ export function ProductCard({ product, owned = false, index = 0 }) {
             >
               Downloads
             </Link>
+          ) : isFree ? (
+            <a
+              href="/geckolicense/download/"
+              data-testid={`download-button-${product.slug}`}
+              aria-label={`Baixar ${product.name} grátis`}
+              className="flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 active:scale-95"
+            >
+              <DownloadIcon className="h-3.5 w-3.5" /> Baixar grátis
+            </a>
           ) : inCart ? (
             <Link
               to="/cart"
