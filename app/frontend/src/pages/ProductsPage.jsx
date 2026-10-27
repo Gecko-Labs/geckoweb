@@ -33,6 +33,7 @@ function inRange(priceCents, range) {
 
 export default function ProductsPage() {
   const [products, setProducts] = useState(null);
+  const [error, setError] = useState(null);
   const [ownedSlugs, setOwnedSlugs] = useState([]);
   const [search, setSearch] = useState("");
   const [params, setParams] = useSearchParams();
@@ -42,7 +43,22 @@ export default function ProductsPage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    api.get("/products").then(({ data }) => setProducts(data)).catch(() => setProducts([]));
+    let cancelled = false;
+
+    fetchProducts()
+      .then(({ data }) => {
+        if (!cancelled) setProducts(data);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setProducts([]);
+          setError(err.message || "Não foi possível carregar os produtos.");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -51,6 +67,17 @@ export default function ProductsPage() {
       setOwnedSlugs(data.filter((l) => l.status === "active").map((l) => l.product_slug));
     }).catch(() => {});
   }, [user]);
+
+  const retry = () => {
+    setError(null);
+    setProducts(null);
+    fetchProducts()
+      .then(({ data }) => setProducts(data))
+      .catch((err) => {
+        setProducts([]);
+        setError(err.message || "Não foi possível carregar os produtos.");
+      });
+  };
 
   const categories = useMemo(() => {
     if (!products) return [];
@@ -148,17 +175,31 @@ export default function ProductsPage() {
         ))}
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="products-grid">
-        {products === null
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-96 rounded-xl" data-testid="product-skeleton" />
-            ))
-          : filtered.map((p, i) => (
-              <ProductCard key={p.slug} product={p} owned={ownedSlugs.includes(p.slug)} index={i} />
-            ))}
-      </div>
+      {error ? (
+        <div className="mt-16 rounded-xl border border-dashed border-destructive py-16 text-center" data-testid="products-error">
+          <p className="text-sm text-muted-foreground">{error}</p>
+          <button
+            type="button"
+            onClick={retry}
+            data-testid="products-retry"
+            className="mt-6 rounded-md border border-primary px-4 py-2 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      ) : (
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="products-grid">
+          {products === null
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-96 rounded-xl" data-testid="product-skeleton" />
+              ))
+            : filtered.map((p, i) => (
+                <ProductCard key={p.slug} product={p} owned={ownedSlugs.includes(p.slug)} index={i} />
+              ))}
+        </div>
+      )}
 
-      {products !== null && filtered.length === 0 && (
+      {products !== null && !error && filtered.length === 0 && (
         <div className="mt-16 rounded-xl border border-dashed border-border py-16 text-center" data-testid="products-empty">
           <p className="text-sm text-muted-foreground">Nenhum produto encontrado para esses filtros.</p>
         </div>
