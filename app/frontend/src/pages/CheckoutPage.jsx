@@ -6,14 +6,14 @@ import { toast } from "sonner";
 import { api, apiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import { formatUSD } from "../utils/format";
-import { FadeIn } from "../components/Reveal";
+import { useCurrency } from "../lib/currency";
 import { toCheckoutItem } from "../lib/products";
-import { useCurrency } from "../lib/currency"
+import { FadeIn } from "../components/Reveal";
 
 export default function CheckoutPage() {
   const { user } = useAuth();
   const { items, subtotal, discount, total, promo } = useCart();
+  const { format } = useCurrency();
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
@@ -64,7 +64,7 @@ window.location.href = data.checkoutUrl;
                     Licença {item.tier === "enterprise" ? "Enterprise Vault" : "Standard Seat"}
                   </p>
                 </div>
-                <p className="font-mono text-base font-bold text-primary">{formatUSD(item.price)}</p>
+                <p className="font-mono text-base font-bold text-primary">{format(item.price)}</p>
               </li>
             ))}
           </ul>
@@ -89,17 +89,17 @@ window.location.href = data.checkoutUrl;
             <dl className="mt-5 flex flex-col gap-3 text-sm">
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Subtotal</dt>
-                <dd className="font-mono">{formatUSD(subtotal)}</dd>
+                <dd className="font-mono">{format(subtotal)}</dd>
               </div>
               {promo && (
                 <div className="flex justify-between text-primary">
                   <dt>Cupom {promo.code}</dt>
-                  <dd className="font-mono">−{formatUSD(discount)}</dd>
+                  <dd className="font-mono">−{format(discount)}</dd>
                 </div>
               )}
               <div className="flex justify-between border-t border-border/60 pt-4">
                 <dt className="font-semibold">Total</dt>
-                <dd className="font-display text-3xl font-black" data-testid="checkout-total">{formatUSD(total)}</dd>
+                <dd className="font-display text-3xl font-black" data-testid="checkout-total">{format(total)}</dd>
               </div>
             </dl>
 
