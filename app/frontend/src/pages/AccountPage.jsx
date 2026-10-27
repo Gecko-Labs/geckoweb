@@ -4,7 +4,8 @@ import { API_BASE, api, apiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { FadeIn } from "../components/Reveal";
-import { formatDate, formatUSD } from "../utils/format";
+import { formatDate } from "../utils/format";
+import { useCurrency } from "../lib/currency";
 import { Skeleton } from "../components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
@@ -42,6 +43,7 @@ export default function AccountPage() {
   const tab = params.get("tab") || "licenses";
   const [licenses, setLicenses] = useState(null);
   const [orders, setOrders] = useState(null);
+  const { format } = useCurrency();
 
   const load = useCallback(() => {
     api.get("/licenses").then(({ data }) => setLicenses(data)).catch(() => setLicenses([]));
@@ -220,7 +222,7 @@ export default function AccountPage() {
                         <span className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-widest ${st.cls}`}>
                           {st.label}
                         </span>
-                        <span className="font-display text-xl font-bold">{formatUSD(order.total_cents)}</span>
+                        <span className="font-display text-xl font-bold">{format(order.total_cents)}</span>
                       </div>
                     </div>
                     <ul className="mt-4 flex flex-col gap-1.5 border-t border-border/50 pt-4">
