@@ -10,7 +10,7 @@ import { FadeIn } from "../components/Reveal";
 
 export default function CartPage() {
   const { items, removeItem, subtotal, discount, total, promo, setPromo } = useCart();
-  const { format } = useCurrency();
+  const { format, currency, formatConverted } = useCurrency();
   const [code, setCode] = useState(promo?.code || "");
   const [validating, setValidating] = useState(false);
   const navigate = useNavigate();
