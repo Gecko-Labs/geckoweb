@@ -42,4 +42,12 @@ export function I18nProvider({ children }) {
   return <I18nContext.Provider value={{ lang, setLang, t }}>{children}</I18nContext.Provider>;
 }
 
-export const useI18n = () => useContext(I18nContext);
+export const useI18n = () => {
+  const context = useContext(I18nContext);
+
+  if (!context) {
+    throw new Error("useI18n must be used within I18nProvider");
+  }
+
+  return context;
+};

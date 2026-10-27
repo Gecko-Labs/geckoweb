@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
 import { API_BASE, api } from "../lib/api";
-import { useI18n } from "../lib/i18n";
+import { useI18n } from "../context/I18nContext";
 
 const STYLES = {
   nav: "hidden items-center gap-2 rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 lg:inline-flex",
