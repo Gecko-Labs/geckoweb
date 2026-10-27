@@ -64,7 +64,11 @@ export default function CartPage() {
                     <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                       Licença {item.tier === "enterprise" ? "Enterprise Vault" : "Standard Seat"}
                     </p>
-                    <p className="mt-auto font-mono text-base font-bold text-primary">{format(item.price)}</p>
+                    <p className="mt-auto font-mono text-base font-bold text-primary">
+                      {currency === "USD" && item.priceObj?.usd
+                        ? format(item.priceObj.usd)
+                        : formatConverted(item.price) ?? format(item.price)}
+                    </p>
                   </div>
                   <button
                     type="button"
@@ -110,17 +114,23 @@ export default function CartPage() {
               <dl className="mt-6 flex flex-col gap-3 border-t border-border/60 pt-5 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Subtotal</dt>
-                  <dd className="font-mono" data-testid="cart-subtotal">{format(subtotal)}</dd>
+                  <dd className="font-mono" data-testid="cart-subtotal">
+                    {currency === "USD" ? (formatConverted(subtotal) ?? format(subtotal)) : format(subtotal)}
+                  </dd>
                 </div>
                 {promo && (
                   <div className="flex justify-between text-primary">
                     <dt>Cupom {promo.code} (−{promo.percent}%)</dt>
-                    <dd className="font-mono" data-testid="cart-discount">−{format(discount)}</dd>
+                    <dd className="font-mono" data-testid="cart-discount">
+                      −{currency === "USD" ? (formatConverted(discount) ?? format(discount)) : format(discount)}
+                    </dd>
                   </div>
                 )}
                 <div className="flex justify-between border-t border-border/60 pt-4">
                   <dt className="font-semibold">Total</dt>
-                  <dd className="font-display text-3xl font-black" data-testid="cart-total">{format(total)}</dd>
+                  <dd className="font-display text-3xl font-black" data-testid="cart-total">
+                    {currency === "USD" ? (formatConverted(total) ?? format(total)) : format(total)}
+                  </dd>
                 </div>
               </dl>
 
