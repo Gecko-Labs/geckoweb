@@ -43,7 +43,7 @@ export default function AccountPage() {
   const tab = params.get("tab") || "licenses";
   const [licenses, setLicenses] = useState(null);
   const [orders, setOrders] = useState(null);
-  const { format } = useCurrency();
+  const { format, currency, formatConverted } = useCurrency();
 
   const load = useCallback(() => {
     api.get("/licenses").then(({ data }) => setLicenses(data)).catch(() => setLicenses([]));
@@ -222,7 +222,9 @@ export default function AccountPage() {
                         <span className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-widest ${st.cls}`}>
                           {st.label}
                         </span>
-                        <span className="font-display text-xl font-bold">{format(order.total_cents)}</span>
+                        <span className="font-display text-xl font-bold">
+                          {currency === "USD" ? (formatConverted(order.total_cents) ?? format(order.total_cents)) : format(order.total_cents)}
+                        </span>
                       </div>
                     </div>
                     <ul className="mt-4 flex flex-col gap-1.5 border-t border-border/50 pt-4">
@@ -231,7 +233,9 @@ export default function AccountPage() {
                           <span className="text-muted-foreground">
                             {item.name} <span className="font-mono text-[10px] uppercase">({item.tier})</span>
                           </span>
-                          <span className="font-mono text-xs">{format(item.unit_amount)}</span>
+                          <span className="font-mono text-xs">
+                            {currency === "USD" ? (formatConverted(item.unit_amount) ?? format(item.unit_amount)) : format(item.unit_amount)}
+                          </span>
                         </li>
                       ))}
                     </ul>
