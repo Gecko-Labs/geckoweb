@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, Fragment } from "react";
 import { api } from "./api";
 import { useI18n } from "./i18n";
-import { setMoneyConfig } from "../utils/format";
 
 const CurrencyContext = createContext(null);
 
@@ -10,10 +9,23 @@ export function CurrencyProvider({ children }) {
   const [currency, setCurrencyState] = useState(
     () => localStorage.getItem("gecko_currency") || (lang === "pt" ? "BRL" : "USD")
   );
-  const [usdPerBrl, setUsdPerBrl] = useState(0.18);
+  // Taxa de câmbio USD por BRL. Valor inicial neutro até a API responder.
+  const [usdPerBrl, setUsdPerBrl] = useState(null);
+  const [ratesLoaded, setRatesLoaded] = useState(false);
 
   useEffect(() => {
-    api.get("/currency/rates").then(({ data }) => data?.usd && setUsdPerBrl(data.usd)).catch(() => {});
+    let cancelled = false;
+    api.get("/currency/rates")
+      .then(({ data }) => {
+        if (!cancelled && data?.usd != null) {
+          setUsdPerBrl(Number(data.usd));
+        }
+        setRatesLoaded(true);
+      })
+      .catch(() => {
+        if (!cancelled) setRatesLoaded(true);
+      });
+    return () => { cancelled = true; };
   }, []);
 
   const setCurrency = useCallback((c) => {
@@ -21,17 +33,21 @@ export function CurrencyProvider({ children }) {
     setCurrencyState(c);
   }, []);
 
-  // recebe o valor em BRL (como vem da API) e formata na moeda escolhida
+  // recebe o valor em BRL (como vem da API, em centavos) e formata na moeda escolhida
   const format = useCallback(
-    (brl) =>
-      currency === "USD"
-        ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(brl * usdPerBrl)
-        : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(brl),
+    (brlCents) => {
+      const brl = (brlCents ?? 0) / 100;
+      if (currency === "USD") {
+        const rate = usdPerBrl ?? 0;
+        return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(brl * rate);
+      }
+      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(brl);
+    },
     [currency, usdPerBrl]
   );
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, format }}>
+    <CurrencyContext.Provider value={{ currency, setCurrency, format, usdPerBrl, ratesLoaded }}>
       {children}
     </CurrencyContext.Provider>
   );
