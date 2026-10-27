@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { useCart } from "../context/CartContext";
 import { pollOrder } from "../lib/products";
-import { formatUSD, formatDate } from "../utils/format";
+import { formatDate } from "../utils/format";
 import DownloadLauncherButton from "../components/DownloadLauncherButton";
 
 export default function PaymentSuccessPage() {
