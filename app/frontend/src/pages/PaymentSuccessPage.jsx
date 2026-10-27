@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useCart } from "../context/CartContext";
 import { pollOrder } from "../lib/products";
 import { formatDate } from "../utils/format";
+import { useCurrency } from "../lib/currency";
 import DownloadLauncherButton from "../components/DownloadLauncherButton";
 
 export default function PaymentSuccessPage() {
@@ -14,6 +15,7 @@ export default function PaymentSuccessPage() {
   const orderId = params.get("order");
 
   const { clear } = useCart();
+  const { format } = useCurrency();
 
   const [state, setState] = useState("processing");
   const [order, setOrder] = useState(null);
@@ -165,7 +167,7 @@ export default function PaymentSuccessPage() {
                 {" · "}
                 {formatDate(order.paid_at || order.created_at)}
                 {" · "}
-                {formatUSD(order.total_cents)}
+                {format(order.total_cents)}
               </p>
             )}
           </div>
