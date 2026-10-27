@@ -3,10 +3,11 @@ import { ArrowRight, ShoppingCart, Trash2, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { useCart } from "../context/CartContext";
-import { formatUSD } from "../utils/format";
+import { useCurrency } from "../lib/currency";
 
 export function CartDrawer() {
   const { drawerOpen, setDrawerOpen, items, removeItem, subtotal } = useCart();
+  const { format } = useCurrency();
   const navigate = useNavigate();
 
   const goCheckout = () => {
@@ -87,7 +88,7 @@ export function CartDrawer() {
                         <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                           Licença {item.tier === "enterprise" ? "Enterprise" : "Standard"}
                         </p>
-                        <p className="mt-auto font-mono text-sm font-bold text-primary">{formatUSD(item.price)}</p>
+                        <p className="mt-auto font-mono text-sm font-bold text-primary">{format(item.price)}</p>
                       </div>
                       <button
                         type="button"
@@ -108,7 +109,7 @@ export function CartDrawer() {
               <div className="border-t border-border px-6 py-5">
                 <div className="mb-4 flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Subtotal</span>
-                  <span className="font-display text-xl font-bold" data-testid="cart-drawer-subtotal">{formatUSD(subtotal)}</span>
+                  <span className="font-display text-xl font-bold" data-testid="cart-drawer-subtotal">{format(subtotal)}</span>
                 </div>
                 <button
                   type="button"
