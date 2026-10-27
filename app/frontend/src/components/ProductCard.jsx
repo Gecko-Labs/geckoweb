@@ -63,8 +63,13 @@ export function ProductCard({ product, owned = false, index = 0 }) {
               {product.rating} <span className="text-muted-foreground/60">({product.reviews_count})</span>
             </div>
             <p className="mt-1 font-display text-2xl font-bold tracking-tight">
-              {formatUSD(product.prices.standard)}
+              {product.prices.standard === 0 ? "Grátis" : formatUSD(product.prices.standard)}
             </p>
+            {product.billingModel === "one-time" && (
+              <span className="mt-0.5 font-mono text-[10px] text-primary/70 uppercase tracking-wider">
+                Pagamento único
+              </span>
+            )}
           </div>
           {owned ? (
             <Link
