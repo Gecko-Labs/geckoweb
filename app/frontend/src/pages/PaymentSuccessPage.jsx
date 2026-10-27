@@ -15,7 +15,7 @@ export default function PaymentSuccessPage() {
   const orderId = params.get("order");
 
   const { clear } = useCart();
-  const { format } = useCurrency();
+  const { format, currency, formatConverted } = useCurrency();
 
   const [state, setState] = useState("processing");
   const [order, setOrder] = useState(null);
