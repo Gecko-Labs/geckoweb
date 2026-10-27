@@ -74,7 +74,15 @@ export function CurrencyProvider({ children }) {
   );
 }
 
-export const useCurrency = () => useContext(CurrencyContext);
+export const useCurrency = () => {
+  const context = useContext(CurrencyContext);
+
+  if (!context) {
+    throw new Error("useCurrency must be used within CurrencyProvider");
+  }
+
+  return context;
+};
 export function MoneyBoundary({ children }) {
   const { currency, usdPerBrl } = useCurrency();
   return <Fragment key={`${currency}-${usdPerBrl}`}>{children}</Fragment>;
