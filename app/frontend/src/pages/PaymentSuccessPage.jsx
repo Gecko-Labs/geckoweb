@@ -167,7 +167,7 @@ export default function PaymentSuccessPage() {
                 {" · "}
                 {formatDate(order.paid_at || order.created_at)}
                 {" · "}
-                {format(order.total_cents)}
+                {currency === "USD" ? (formatConverted(order.total_cents) ?? format(order.total_cents)) : format(order.total_cents)}
               </p>
             )}
           </div>
