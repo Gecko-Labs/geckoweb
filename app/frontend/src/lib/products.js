@@ -16,12 +16,13 @@ const CONTENT = {
     category: "Saúde & Clínicas",
     badge: "Lançamento",
     featured: true,
+    billingModel: "one-time",
     short_desc:
       "Central de IA para gerar laudos multiprofissionais com base em estudos científicos, integrada à gestão da clínica.",
     description:
       "O LaudIA é um aplicativo desktop para clínicas multiprofissionais. Ele reúne a gestão de pacientes e profissionais e uma central de IA que ajuda a redigir laudos fundamentados em estudos científicos, sempre com revisão e assinatura do profissional responsável. Licença vitalícia, com validação offline.",
     compatibility: ["Windows 10 (64 bits)", "Windows 11"],
-    tags: ["IA", "Laudos", "Multiprofissional", "Licença vitalícia"],
+    tags: ["IA", "Laudos", "Multiprofissional", "Licença vitalícia", "Pagamento único"],
     features: [
       "Cadastro de pacientes e profissionais de diferentes conselhos",
       "Geração de laudos com IA e referências a estudos científicos",
@@ -43,15 +44,49 @@ const CONTENT = {
     image: cover("#0b2a26", "#10B981"),
     gallery: [cover("#0b2a26", "#10B981")],
   },
+  "gecko-license": {
+    tagline: "Gerenciador de licenças e atualizações do Gecko",
+    category: "Utilitários",
+    badge: "Grátis",
+    featured: false,
+    billingModel: "free",
+    short_desc:
+      "Utilitário para gerenciar licenças dos produtos Gecko Labs, baixar atualizações e ativar instalações offline.",
+    description:
+      "O Gecko License é um utilitário gratuito para gerenciar licenças dos softwares da Gecko Labs. Ele permite baixar instaladores, validar licenças e manter os produtos atualizados, sem qualquer custo.",
+    compatibility: ["Windows 10 (64 bits)", "Windows 11", "macOS", "Linux"],
+    tags: ["Utilitário", "Licenças", "Grátis", "Downloads", "Atualizações"],
+    features: [
+      "Gerenciamento de licenças dos produtos Gecko Labs",
+      "Download de instaladores e atualizações",
+      "Ativação offline de licenças",
+      "Gratuito — sem cobrança ou assinatura",
+    ],
+    requirements: {
+      os: "Windows 10/11, macOS ou Linux",
+      memory: "—",
+      runtime: "—",
+      deps: "—",
+    },
+    faq: [
+      { q: "O Gecko License é gratuito?", a: "Sim. É um utilitário gratuito para todos os clientes da Gecko Labs." },
+      { q: "Preciso de licença para usar?", a: "Não. O Gecko License é gratuito e não requer ativação." },
+    ],
+    image: cover("#111827", "#10B981"),
+    gallery: [cover("#111827", "#10B981")],
+  },
 };
 
 const fromApi = (p) => {
   const slug = p.code.toLowerCase();
   const prices = {};
+  // A API já retorna priceBrl em centavos (inteiros). Não multiplicar por 100.
   (p.plans || []).forEach((pl) => {
     const tier = TIER_BY_PLAN[pl.code];
-    if (tier) prices[tier] = Math.round(pl.priceBrl * 100);
+    if (tier) prices[tier] = Math.round(pl.priceBrl ?? 0);
   });
+  // Produtos sem planos (ex: gratuitos) recebem preço zero no tier standard.
+  if (!prices.standard) prices.standard = 0;
   const img = cover("#111827", "#10B981");
   return {
     slug,
