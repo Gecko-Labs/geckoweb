@@ -28,7 +28,7 @@ export default function ProductDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addItem, hasItem } = useCart();
-  const { format } = useCurrency();
+  const { format, currency, formatConverted } = useCurrency();
   const [product, setProduct] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [tier, setTier] = useState("standard");
@@ -70,7 +70,13 @@ export default function ProductDetailPage() {
   }
 
   const inCart = hasItem(product.slug);
-  const price = product.prices[tier];
+  const priceObj = product.prices[tier] ?? {};
+  const priceCents =
+    priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.standard ?? 0;
+  const priceUsdFallback =
+    currency === "USD" && !priceObj.usd
+      ? formatConverted(priceObj.brl ?? priceObj.standard ?? 0)
+      : null;
   const isFreeProduct = product.billingModel === "free" || product.prices.standard === 0;
 
   const handleAdd = () => {
@@ -179,7 +185,14 @@ export default function ProductDetailPage() {
                       <span className="block text-sm font-semibold">{t.name}</span>
                       <span className="block font-mono text-[10px] text-muted-foreground">{t.desc}</span>
                     </span>
-                    <span className="font-mono text-sm font-bold text-primary">{format(product.prices[t.id])}</span>
+                    <span className="font-mono text-sm font-bold text-primary">
+                      {(() => {
+                        const p = product.prices[t.id] ?? {};
+                        const pc = p[currency.toLowerCase()] ?? p.brl ?? p.standard ?? 0;
+                        const puf = currency === "USD" && !p.usd ? formatConverted(p.brl ?? p.standard ?? 0) : null;
+                        return puf ?? format(pc);
+                      })()}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -187,7 +200,7 @@ export default function ProductDetailPage() {
 
             <div className="mt-6 flex items-end justify-between border-t border-border/60 pt-5">
               <span className="text-sm text-muted-foreground">Total</span>
-              <span className="font-display text-4xl font-black tracking-tight" data-testid="product-price">{format(price)}</span>
+              <span className="font-display text-4xl font-black tracking-tight" data-testid="product-price">{priceUsdFallback ?? format(priceCents)}</span>
             </div>
 
             {owned ? (
