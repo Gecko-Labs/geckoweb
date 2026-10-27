@@ -8,9 +8,22 @@ import { useCurrency } from "../lib/currency";
 
 export function ProductCard({ product, owned = false, index = 0 }) {
   const { addItem, hasItem } = useCart();
-  const { format } = useCurrency();
+  const { format, currency, formatConverted } = useCurrency();
   const inCart = hasItem(product.slug);
-  const isFree = product.billingModel === "free" || product.prices.standard === 0;
+  const isFree =
+    product.billingModel === "free" ||
+    (product.prices.standard &&
+      Object.values(product.prices.standard).every((v) => v == null || v === 0));
+
+  // Obtém o preço oficial na moeda selecionada. Se não houver preço oficial
+  // para essa moeda, usa o preço BRL como fallback (compatibilidade).
+  const priceObj = product.prices.standard ?? {};
+  const priceCents =
+    priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.standard ?? 0;
+  const priceUsdFallback =
+    currency === "USD" && !priceObj.usd
+      ? formatConverted(priceObj.brl ?? priceObj.standard ?? 0)
+      : null;
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -65,7 +78,7 @@ export function ProductCard({ product, owned = false, index = 0 }) {
               {product.rating} <span className="text-muted-foreground/60">({product.reviews_count})</span>
             </div>
             <p className="mt-1 font-display text-2xl font-bold tracking-tight">
-              {isFree ? "Grátis" : format(product.prices.standard)}
+              {isFree ? "Grátis" : priceUsdFallback ?? format(priceCents)}
             </p>
             {product.billingModel === "one-time" && (
               <span className="mt-0.5 font-mono text-[10px] text-primary/70 uppercase tracking-wider">
