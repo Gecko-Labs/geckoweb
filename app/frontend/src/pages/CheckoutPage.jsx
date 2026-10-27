@@ -13,7 +13,7 @@ import { FadeIn } from "../components/Reveal";
 export default function CheckoutPage() {
   const { user } = useAuth();
   const { items, subtotal, discount, total, promo } = useCart();
-  const { format } = useCurrency();
+  const { format, currency, formatConverted } = useCurrency();
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
