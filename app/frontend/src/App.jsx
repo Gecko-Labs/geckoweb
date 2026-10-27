@@ -15,7 +15,7 @@ import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { I18nProvider } from "./context/I18nContext";
-import { CurrencyProvider } from "./context/CurrencyContext";
+import { CurrencyProvider } from "./lib/currency";
 
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
