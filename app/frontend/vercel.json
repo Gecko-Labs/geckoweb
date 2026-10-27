@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/geckolicense/download/", "destination": "https://geckolabsdev.duckdns.org/api/launcher/download" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
