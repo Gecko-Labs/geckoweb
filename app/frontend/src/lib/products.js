@@ -80,10 +80,16 @@ const CONTENT = {
 const fromApi = (p) => {
   const slug = p.code.toLowerCase();
   const prices = {};
-  // A API já retorna priceBrl em centavos (inteiros). Não multiplicar por 100.
+  // A API já retorna priceBrl e priceUsd em centavos (inteiros). Não multiplicar por 100.
   (p.plans || []).forEach((pl) => {
     const tier = TIER_BY_PLAN[pl.code];
-    if (tier) prices[tier] = Math.round(pl.priceBrl ?? 0);
+    if (tier) {
+      prices[tier] = {};
+      if (pl.priceBrl != null) prices[tier].brl = Math.round(pl.priceBrl);
+      if (pl.priceUsd != null) prices[tier].usd = Math.round(pl.priceUsd);
+      // Se só houver preço em BRL, ainda assim expõe standard para compatibilidade.
+      if (prices[tier].brl != null) prices[tier].standard = prices[tier].brl;
+    }
   });
   // Produtos sem planos (ex: gratuitos) recebem preço zero no tier standard.
   if (!prices.standard) prices.standard = 0;
