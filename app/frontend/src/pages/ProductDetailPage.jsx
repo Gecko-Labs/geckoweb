@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Check, Copy, ShieldCheck, ShoppingCart, Star, Terminal } from "lucide-react";
+import { Check, Copy, ShieldCheck, ShoppingCart, Star, Terminal, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
-import { formatUSD } from "../utils/format";
+import { useCurrency } from "../lib/currency";
 import { FadeIn } from "../components/Reveal";
 import { Skeleton } from "../components/ui/skeleton";
 import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
@@ -28,6 +28,7 @@ export default function ProductDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addItem, hasItem } = useCart();
+  const { format } = useCurrency();
   const [product, setProduct] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [tier, setTier] = useState("standard");
@@ -70,6 +71,7 @@ export default function ProductDetailPage() {
 
   const inCart = hasItem(product.slug);
   const price = product.prices[tier];
+  const isFreeProduct = product.billingModel === "free" || product.prices.standard === 0;
 
   const handleAdd = () => {
     addItem(product, tier);
@@ -177,7 +179,7 @@ export default function ProductDetailPage() {
                       <span className="block text-sm font-semibold">{t.name}</span>
                       <span className="block font-mono text-[10px] text-muted-foreground">{t.desc}</span>
                     </span>
-                    <span className="font-mono text-sm font-bold text-primary">{formatUSD(product.prices[t.id])}</span>
+                    <span className="font-mono text-sm font-bold text-primary">{format(product.prices[t.id])}</span>
                   </button>
                 ))}
               </div>
@@ -185,7 +187,7 @@ export default function ProductDetailPage() {
 
             <div className="mt-6 flex items-end justify-between border-t border-border/60 pt-5">
               <span className="text-sm text-muted-foreground">Total</span>
-              <span className="font-display text-4xl font-black tracking-tight" data-testid="product-price">{formatUSD(price)}</span>
+              <span className="font-display text-4xl font-black tracking-tight" data-testid="product-price">{format(price)}</span>
             </div>
 
             {owned ? (
@@ -199,6 +201,16 @@ export default function ProductDetailPage() {
                 >
                   Ir para downloads
                 </Link>
+              </div>
+            ) : isFreeProduct ? (
+              <div className="mt-5 flex gap-3">
+                <a
+                  href="/geckolicense/download/"
+                  data-testid="product-download-free"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:shadow-xl hover:shadow-primary/25 active:scale-[0.98]"
+                >
+                  <Download className="h-4 w-4" /> Baixar grátis
+                </a>
               </div>
             ) : (
               <div className="mt-5 flex gap-3">
