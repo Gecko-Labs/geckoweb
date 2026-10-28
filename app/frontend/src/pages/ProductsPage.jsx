@@ -2,12 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 
-import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { ProductCard } from "../components/ProductCard";
 import { SectionHeading } from "../components/SectionHeading";
 import { Skeleton } from "../components/ui/skeleton";
-import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
+import { fetchProducts, fetchMyLicenses } from "../lib/products";
 import {
   Select,
   SelectContent,
