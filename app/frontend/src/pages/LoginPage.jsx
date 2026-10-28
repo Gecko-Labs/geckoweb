@@ -64,7 +64,11 @@ export default function LoginPage() {
   const googleLogin = () => {
     const apiBase = import.meta.env.VITE_API_URL || "/api";
     const redirectUri = `${window.location.origin}/auth/callback`;
-    window.location.href = `${apiBase}/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    const params = new URLSearchParams({
+      redirect_uri: redirectUri,
+      prompt: "select_account",
+    });
+    window.location.href = `${apiBase}/auth/google?${params.toString()}`;
   };
 
   return (
