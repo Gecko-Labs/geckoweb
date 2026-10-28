@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
+import { api } from "../lib/api";
 import { useI18n } from "../context/I18nContext";
 
 const STYLES = {
