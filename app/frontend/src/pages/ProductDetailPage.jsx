@@ -133,20 +133,24 @@ export default function ProductDetailPage() {
               </span>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3">
-              {product.gallery.map((src, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setActiveImage(i)}
-                  aria-label={`Ver screenshot ${i + 1}`}
-                  data-testid={`product-gallery-thumb-${i}`}
-                  className={`overflow-hidden rounded-lg border transition-all duration-200 ${
-                    activeImage === i ? "border-primary shadow-lg shadow-primary/10" : "border-border/60 opacity-60 hover:opacity-100"
-                  }`}
-                >
-                  <img src={src} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover" />
-                </button>
-              ))}
+              {Array.isArray(product.gallery) && product.gallery.length > 0 ? (
+                product.gallery.map((src, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setActiveImage(i)}
+                    aria-label={`Ver screenshot ${i + 1}`}
+                    data-testid={`product-gallery-thumb-${i}`}
+                    className={`overflow-hidden rounded-lg border transition-all duration-200 ${
+                      activeImage === i ? "border-primary shadow-lg shadow-primary/10" : "border-border/60 opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={src} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover" />
+                  </button>
+                ))
+              ) : (
+                <span className="col-span-3 text-center text-sm text-muted-foreground py-4">Nenhuma imagem adicional disponível.</span>
+              )}
             </div>
           </FadeIn>
         </div>
@@ -303,18 +307,22 @@ export default function ProductDetailPage() {
 
           <FadeIn className="mt-12">
             <h2 className="font-display text-2xl font-bold uppercase tracking-tight">Perguntas frequentes</h2>
-            <Accordion type="single" collapsible className="mt-4" data-testid="product-faq">
-              {product.faq.map((item, i) => (
-                <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger data-testid={`faq-trigger-${i}`} className="text-left text-sm font-medium">
-                    {item.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                    {item.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {Array.isArray(product.faq) && product.faq.length > 0 ? (
+              <Accordion type="single" collapsible className="mt-4" data-testid="product-faq">
+                {product.faq.map((item, i) => (
+                  <AccordionItem key={i} value={`faq-${i}`}>
+                    <AccordionTrigger data-testid={`faq-trigger-${i}`} className="text-left text-sm font-medium">
+                      {item.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                      {item.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">Nenhuma pergunta frequente cadastrada.</p>
+            )}
           </FadeIn>
         </div>
 
@@ -338,21 +346,29 @@ export default function ProductDetailPage() {
 
           <FadeIn delay={0.1} className="mt-8">
             <h3 className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Compatibilidade</h3>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {product.compatibility.map((c) => (
-                <span key={c} className="rounded-full border border-border bg-card px-3 py-1.5 font-mono text-xs text-muted-foreground">
-                  {c}
-                </span>
-              ))}
-            </div>
+            {Array.isArray(product.compatibility) && product.compatibility.length > 0 ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {product.compatibility.map((c) => (
+                  <span key={c} className="rounded-full border border-border bg-card px-3 py-1.5 font-mono text-xs text-muted-foreground">
+                    {c}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-muted-foreground">Informações de compatibilidade não disponíveis.</p>
+            )}
             <h3 className="mt-6 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Stack</h3>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {product.tags.map((t) => (
-                <span key={t} className="rounded-full border border-primary/25 bg-primary/5 px-3 py-1.5 font-mono text-xs text-primary">
-                  {t}
-                </span>
-              ))}
-            </div>
+            {Array.isArray(product.tags) && product.tags.length > 0 ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {product.tags.map((t) => (
+                  <span key={t} className="rounded-full border border-primary/25 bg-primary/5 px-3 py-1.5 font-mono text-xs text-primary">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-muted-foreground">Nenhuma tag disponível.</p>
+            )}
           </FadeIn>
         </div>
       </div>
