@@ -35,6 +35,7 @@ import PaymentCancelPage from "./pages/PaymentCancelPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
 import AccountPage from "./pages/AccountPage";
 import SupportPage from "./pages/SupportPage";
 import TermsPage from "./pages/TermsPage";
