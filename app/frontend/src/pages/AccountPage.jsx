@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 
-import { API_BASE, api, apiError } from "../lib/api";
+import { api, apiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { FadeIn } from "../components/Reveal";
@@ -8,7 +8,7 @@ import { formatDate } from "../utils/format";
 import { useCurrency } from "../lib/currency";
 import { Skeleton } from "../components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
+import { fetchMyLicenses, fetchMyOrders } from "../lib/products";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,8 +46,8 @@ export default function AccountPage() {
   const { format, currency, formatConverted } = useCurrency();
 
   const load = useCallback(() => {
-    api.get("/licenses").then(({ data }) => setLicenses(data)).catch(() => setLicenses([]));
-    api.get("/orders").then(({ data }) => setOrders(data)).catch(() => setOrders([]));
+    fetchMyLicenses().then(({ data }) => setLicenses(data)).catch(() => setLicenses([]));
+    fetchMyOrders().then(({ data }) => setOrders(data)).catch(() => setOrders([]));
   }, []);
 
   useEffect(() => {
