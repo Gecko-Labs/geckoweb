@@ -101,7 +101,7 @@ export function ProductCard({ product, owned = false, index = 0 }) {
               aria-label={`Baixar ${product.name} grátis`}
               className="flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 active:scale-95"
             >
-              <DownloadIcon className="h-3.5 w-3.5" /> Baixar grátis
+              <DownloadIcon className="h-3.5 w-3.5" /> Começar grátis
             </a>
           ) : inCart ? (
             <Link
