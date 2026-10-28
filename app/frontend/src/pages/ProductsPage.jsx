@@ -62,9 +62,11 @@ export default function ProductsPage() {
 
   useEffect(() => {
     if (!user) return setOwnedSlugs([]);
-    api.get("/licenses").then(({ data }) => {
-      setOwnedSlugs(data.filter((l) => l.status === "active").map((l) => l.product_slug));
-    }).catch(() => {});
+    fetchMyLicenses()
+      .then(({ data }) => {
+        setOwnedSlugs(data.filter((l) => l.status === "active").map((l) => l.product_slug));
+      })
+      .catch(() => {});
   }, [user]);
 
   const retry = () => {
