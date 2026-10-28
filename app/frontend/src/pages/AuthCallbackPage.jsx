@@ -81,7 +81,7 @@ export default function AuthCallbackPage() {
         toast.success("Login com Google realizado com sucesso");
 
         // Redirect to intended page or account
-        const from = params.from || "/account";
+        const from = params.from || "/";
         if (!cancelled) navigate(from, { replace: true });
       } catch (err) {
         clearAuthToken();
