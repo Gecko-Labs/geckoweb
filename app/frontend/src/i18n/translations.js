@@ -361,6 +361,7 @@ const translations = {
       ecosystem: "Ecosystem",
       support: "Support",
       downloadLauncher: "Download GeckoLauncher",
+      download: "Download GeckoLauncher",
     },
 
     home: {
