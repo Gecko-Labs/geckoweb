@@ -80,6 +80,37 @@ const CONTENT = {
     image: cover("#111827", "#10B981"),
     gallery: [cover("#111827", "#10B981")],
   },
+  "geckolauncher": {
+    tagline: "Launcher para acessar e gerenciar os softwares da Gecko Labs",
+    category: "Utilitários",
+    badge: "Grátis",
+    featured: false,
+    billingModel: "free",
+    short_desc:
+      "Launcher para acessar, baixar e gerenciar os softwares da Gecko Labs. Download gratuito do instalador.",
+    description:
+      "O GeckoLauncher é o launcher oficial da Gecko Labs. Ele permite baixar instaladores, gerenciar licenças e manter os produtos atualizados, sem qualquer custo.",
+    compatibility: ["Windows 10 (64 bits)", "Windows 11"],
+    tags: ["Launcher", "Downloads", "Atualizações", "Grátis"],
+    features: [
+      "Download de instaladores dos produtos Gecko Labs",
+      "Gerenciamento de licenças",
+      "Atualizações automáticas",
+      "Gratuito — sem cobrança ou assinatura",
+    ],
+    requirements: {
+      os: "Windows 10 (1809+) ou Windows 11",
+      memory: "—",
+      runtime: "—",
+      deps: "—",
+    },
+    faq: [
+      { q: "O GeckoLauncher é gratuito?", a: "Sim. É um launcher gratuito para todos os usuários da Gecko Labs." },
+      { q: "Preciso de licença para usar?", a: "Não. O GeckoLauncher é gratuito e não requer ativação." },
+    ],
+    image: cover("#111827", "#10B981"),
+    gallery: [cover("#111827", "#10B981")],
+  },
 };
 
 const fromApi = (p) => {
