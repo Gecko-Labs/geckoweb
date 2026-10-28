@@ -297,7 +297,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className={'md:' + (index % 2 === 0 ? 'order-3 pl-8' : 'text-right pr-8')}>
-                        <div className='inline-flex flex-col items-' + (index % 2 === 0 ? 'start' : 'end') + ' gap-2'>
+                        <div className={inline-flex flex-col items-\ gap-2}>
                           <div className='rounded-xl bg-card border border-border/70 p-6 md:w-64'>
                             {index === 0 && (
                               <>
