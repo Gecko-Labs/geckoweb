@@ -1,11 +1,34 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Code2, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Code2, ShieldCheck, Zap, Download } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { useI18n } from "../context/I18nContext";
 import { api } from "../lib/api";
 import { ProductCard } from "../components/ProductCard";
+import { DownloadLauncherButton } from "../components/DownloadLauncherButton";
+import { SectionHeading } from "../components/SectionHeading";
+import { FadeIn } from "../components/Reveal";
+
+function LetterByLetter({ text, className = "" }) {
+  const words = text.split(" ");
+  return (
+    <span className={className}>
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: "inline-block" }}
+        >
+          {word}{i < words.length - 1 ? " " : ""}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -49,24 +72,44 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen">
-      <section className="mx-auto max-w-7xl px-4 pb-20 pt-32 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pb-20 pt-32 sm:px-6 lg:px-8" id="home">
         <div className="max-w-4xl">
-          <p className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
+          <motion.p
+            className="font-mono text-xs uppercase tracking-[0.25em] text-primary"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             GECKO LABS // SOFTWARE
-          </p>
+          </motion.p>
 
-          <h1 className="mt-5 text-5xl font-bold tracking-tight sm:text-7xl">
-            {t("home.hero.title", "Software construído para criar mais.")}
-          </h1>
+          <motion.h1
+            className="mt-5 text-5xl font-bold tracking-tight sm:text-7xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <LetterByLetter text={t("home.hero.title", "Software construído para criar mais.")} />
+          </motion.h1>
 
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+          <motion.p
+            className="mt-6 max-w-2xl text-lg text-muted-foreground"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             {t(
               "home.hero.description",
               "Ferramentas profissionais, licenças digitais e produtos desenvolvidos pela Gecko Labs."
             )}
-          </p>
+          </motion.p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <motion.div
+            className="mt-8 flex flex-wrap gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
             <Link
               to="/products"
               className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground"
@@ -75,13 +118,15 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
 
+            <DownloadLauncherButton variant="primary" />
+
             <Link
               to="/support"
               className="rounded-md border px-5 py-3 text-sm font-medium"
             >
               {t("home.hero.supportButton", "Suporte")}
             </Link>
-          </div>
+          </motion.div>
         </div>
 
         <div className="mt-20 grid gap-4 md:grid-cols-3">
