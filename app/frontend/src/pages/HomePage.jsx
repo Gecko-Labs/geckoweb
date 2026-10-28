@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useI18n } from '../context/I18nContext';
 import { api } from '../lib/api';
 import { ProductCard } from '../components/ProductCard';
-import { DownloadLauncherButton } from '../components/DownloadLauncherButton';
+import DownloadLauncherButton from '../components/DownloadLauncherButton';
 import { SectionHeading } from '../components/SectionHeading';
 import { FadeIn } from '../components/Reveal';
 
