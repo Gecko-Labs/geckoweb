@@ -4,13 +4,12 @@ import { Check, Copy, ShieldCheck, ShoppingCart, Star, Terminal, Download } from
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
-import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useCurrency } from "../lib/currency";
 import { FadeIn } from "../components/Reveal";
 import { Skeleton } from "../components/ui/skeleton";
-import { fetchProducts, fetchProduct, fetchMyLicenses, fetchMyOrders } from "../lib/products";
+import { fetchProduct, fetchMyLicenses } from "../lib/products";
 import {
   Accordion,
   AccordionContent,
@@ -39,14 +38,24 @@ export default function ProductDetailPage() {
     setProduct(null);
     setNotFound(false);
     setActiveImage(0);
-    api.get(`/products/${slug}`).then(({ data }) => setProduct(data)).catch(() => setNotFound(true));
+    fetchProduct(slug)
+      .then(({ data }) => setProduct(data))
+      .catch((err) => {
+        if (err.status === 404) {
+          setNotFound(true);
+        } else {
+          setNotFound(true);
+        }
+      });
   }, [slug]);
 
   useEffect(() => {
     if (!user || !product) return setOwned(false);
-    api.get("/licenses").then(({ data }) => {
-      setOwned(data.some((l) => l.product_slug === product.slug && l.status === "active"));
-    }).catch(() => {});
+    fetchMyLicenses()
+      .then(({ data }) => {
+        setOwned(data.some((l) => l.product_slug === product.slug && l.status === "active"));
+      })
+      .catch(() => {});
   }, [user, product]);
 
   if (notFound) {
