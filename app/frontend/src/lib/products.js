@@ -43,6 +43,11 @@ const CONTENT = {
     ],
     image: cover("#0b2a26", "#10B981"),
     gallery: [cover("#0b2a26", "#10B981")],
+    // Preços oficiais do LaudIA (em centavos) - sobrescrevem valores da API
+    priceOverride: {
+      standard: { brl: 25000, usd: 4700 },
+      enterprise: { brl: 50000, usd: 9400 },
+    },
   },
   "gecko-license": {
     tagline: "Gerenciador de licenças e atualizações do Gecko",
@@ -94,6 +99,20 @@ const fromApi = (p) => {
   // Produtos sem planos (ex: gratuitos) recebem preço zero no tier standard.
   if (!prices.standard) prices.standard = 0;
   const img = cover("#111827", "#10B981");
+  const content = CONTENT[slug] || {};
+  // Aplicar override de preços oficiais se definido no CONTENT
+  const finalPrices = { ...prices };
+  if (content.priceOverride) {
+    Object.entries(content.priceOverride).forEach(([tier, prices]) => {
+      if (finalPrices[tier]) {
+        finalPrices[tier] = { ...finalPrices[tier], ...prices };
+      } else {
+        finalPrices[tier] = prices;
+      }
+      // Garantir que standard seja definido para compatibilidade
+      if (finalPrices[tier].brl != null) finalPrices[tier].standard = finalPrices[tier].brl;
+    });
+  }
   return {
     slug,
     name: p.name,
@@ -113,8 +132,8 @@ const fromApi = (p) => {
     faq: [],
     image: img,
     gallery: [img],
-    ...(CONTENT[slug] || {}),
-    prices,
+    ...content,
+    prices: finalPrices,
   };
 };
 
