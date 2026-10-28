@@ -61,6 +61,7 @@ const translations = {
       ecosystem: "Ecossistema",
       support: "Suporte",
       downloadLauncher: "Baixar GeckoLauncher",
+      download: "Baixar GeckoLauncher",
     },
 
     home: {
