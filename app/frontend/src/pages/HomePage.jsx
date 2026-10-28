@@ -73,6 +73,15 @@ export default function HomePage() {
 
   const featured = products.filter((product) => product.featured).slice(0, 3);
 
+  // Integration flow steps (defined locally to avoid translation returning a string)
+  const integrationFlow = [
+    { step: 1, title: t('home.ecosystem.flow.step1.title', 'Selecionar instrumento'), desc: t('home.ecosystem.flow.step1.desc', 'Profissional seleciona e aplica instrumento compatível no Instrument.IA') },
+    { step: 2, title: t('home.ecosystem.flow.step2.title', 'Organizar resultados'), desc: t('home.ecosystem.flow.step2.desc', 'Resultados são organizados e apresentados com contexto') },
+    { step: 3, title: t('home.ecosystem.flow.step3.title', 'Enviar ao LaudIA'), desc: t('home.ecosystem.flow.step3.desc', 'Com autorização, dados pertinentes são enviados ao LaudIA como contexto auxiliar') },
+    { step: 4, title: t('home.ecosystem.flow.step4.title', 'Elaborar laudo'), desc: t('home.ecosystem.flow.step4.desc', 'LaudIA usa informações como auxílio, mantendo fontes identificáveis') },
+    { step: 5, title: t('home.ecosystem.flow.step5.title', 'Revisar e validar'), desc: t('home.ecosystem.flow.step5.desc', 'Profissional revisa e valida o conteúdo final') },
+  ];
+
   const features = [
     {
       icon: Zap,
@@ -270,13 +279,7 @@ export default function HomePage() {
             <div className='relative'>
               <div className='absolute left-1/2 top-0 bottom-0 w-0.5 bg-border/50 -translate-x-1/2 hidden md:block' />
               <div className='space-y-8'>
-                {t('home.ecosystem.integrationFlow', [
-                  { step: 1, title: 'Selecionar instrumento', desc: 'Profissional seleciona e aplica instrumento compatvel no Instrument.IA' },
-                  { step: 2, title: 'Organizar resultados', desc: 'Resultados so organizados e apresentados com contexto' },
-                  { step: 3, title: 'Enviar ao LaudIA', desc: 'Com autorizao, dados pertinentes so enviados ao LaudIA como contexto auxiliar' },
-                  { step: 4, title: 'Elaborar laudo', desc: 'LaudIA usa informaes como auxlio, mantendo fontes identificveis' },
-                  { step: 5, title: 'Revisar e validar', desc: 'Profissional revisa e valida o contedo final' },
-                ]).map((flow, index) => (
+                {integrationFlow.map((flow, index) => (
                   <FadeIn key={index} delay={index * 0.1}>
                     <div className='relative flex items-start gap-6 md:grid md:grid-cols-[1fr_48px_1fr] md:items-center'>
                       <div className={'md:' + (index % 2 === 0 ? 'text-right pr-8' : 'order-3 pl-8')}>
