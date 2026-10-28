@@ -77,7 +77,7 @@ export default function HomePage() {
   const features = [
     {
       icon: Zap,
-      title: t('home.features.fast.title', 'Rápido'),
+      title: t('home.features.fast.title', 'Rpido'),
       text: t(
         'home.features.fast.description',
         'Ferramentas focadas em fluxo de trabalho.'
@@ -88,7 +88,7 @@ export default function HomePage() {
       title: t('home.features.licensed.title', 'Licenciado'),
       text: t(
         'home.features.licensed.description',
-        'Entrega e gerenciamento de licenças.'
+        'Entrega e gerenciamento de licenas.'
       ),
     },
     {
@@ -96,7 +96,7 @@ export default function HomePage() {
       title: t('home.features.professional.title', 'Profissional'),
       text: t(
         'home.features.professional.description',
-        'Software desenvolvido para produção real.'
+        'Software desenvolvido para produo real.'
       ),
     },
   ];
@@ -120,7 +120,7 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <LetterByLetter text={t('home.hero.title', 'Software construído para criar mais.')} />
+            <LetterByLetter text={t('home.hero.title', 'Software construdo para criar mais.')} />
           </motion.h1>
 
           <motion.p
@@ -131,7 +131,7 @@ export default function HomePage() {
           >
             {t(
               'home.hero.description',
-              'Ferramentas profissionais, licenças digitais e produtos desenvolvidos pela Gecko Labs.'
+              'Ferramentas profissionais, licenas digitais e produtos desenvolvidos pela Gecko Labs.'
             )}
           </motion.p>
 
@@ -176,7 +176,7 @@ export default function HomePage() {
           <div className='mb-8 flex items-end justify-between'>
             <div>
               <p className='font-mono text-xs text-primary'>
-                {t('home.featured.eyebrow', 'CATÁLOGO')}
+                {t('home.featured.eyebrow', 'CATLOGO')}
               </p>
 
               <h2 className='mt-2 text-3xl font-bold'>
@@ -211,7 +211,7 @@ export default function HomePage() {
           <SectionHeading
             chapter='03'
             title={t('home.ecosystem.title', 'Ecossistema Gecko Labs')}
-            description={t('home.ecosystem.subtitle', 'Um ecossistema de ferramentas que trabalham em conjunto para conectar avaliação, organização de informações e elaboração de laudos.')}
+            description={t('home.ecosystem.subtitle', 'Um ecossistema de ferramentas que trabalham em conjunto para conectar avaliao, organizao de informaes e elaborao de laudos.')}
             align='center'
           />
         </FadeIn>
@@ -221,7 +221,7 @@ export default function HomePage() {
           <div className='mt-12 grid gap-6 md:grid-cols-3'>
             <EcosystemProductCard
               product={t('home.ecosystem.laudia')}
-              status={t('home.ecosystem.laudia.status', 'Disponível')}
+              status={t('home.ecosystem.laudia.status', 'Disponvel')}
               statusColor='green'
               action={
                 <Link
@@ -235,7 +235,7 @@ export default function HomePage() {
             />
             <EcosystemProductCard
               product={t('home.ecosystem.geckolauncher')}
-              status={t('home.ecosystem.geckolauncher.status', 'Disponível')}
+              status={t('home.ecosystem.geckolauncher.status', 'Disponvel')}
               statusColor='green'
               action={
                 <DownloadLauncherButton variant='primary' showInfo />
@@ -253,7 +253,7 @@ export default function HomePage() {
                 >
                   <span className='inline-flex items-center gap-1.5'>
                     <svg className='h-3.5 w-3.5 animate-spin' viewBox='0 0 24 24'><circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='3' fill='none' /><path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z' /></svg>
-                    Aguardando lançamento
+                    Aguardando lanamento
                   </span>
                 </button>
               }
@@ -265,18 +265,18 @@ export default function HomePage() {
         <FadeIn delay={0.2}>
           <div className='mt-16'>
             <div className='text-center mb-12'>
-              <h3 className='font-mono text-xs uppercase tracking-[0.25em] text-primary'>{t('home.ecosystem.integrationTitle', 'Integração planejada')}</h3>
-              <p className='mt-2 max-w-2xl mx-auto text-sm text-muted-foreground'>{t('home.ecosystem.integrationDescription', 'O Instrument.IA está em desenvolvimento. A integração com o LaudIA permitirá que resultados de instrumentos psicológicos sejam usados como contexto auxiliar na elaboração de laudos, mantendo fontes e resultados identificáveis.')}</p>
+              <h3 className='font-mono text-xs uppercase tracking-[0.25em] text-primary'>{t('home.ecosystem.integrationTitle', 'Integrao planejada')}</h3>
+              <p className='mt-2 max-w-2xl mx-auto text-sm text-muted-foreground'>{t('home.ecosystem.integrationDescription', 'O Instrument.IA est em desenvolvimento. A integrao com o LaudIA permitir que resultados de instrumentos psicolgicos sejam usados como contexto auxiliar na elaborao de laudos, mantendo fontes e resultados identificveis.')}</p>
             </div>
             <div className='relative'>
               <div className='absolute left-1/2 top-0 bottom-0 w-0.5 bg-border/50 -translate-x-1/2 hidden md:block' />
               <div className='space-y-8'>
                 {t('home.ecosystem.integrationFlow', [
-                  { step: 1, title: 'Selecionar instrumento', desc: 'Profissional seleciona e aplica instrumento compatível no Instrument.IA' },
-                  { step: 2, title: 'Organizar resultados', desc: 'Resultados são organizados e apresentados com contexto' },
-                  { step: 3, title: 'Enviar ao LaudIA', desc: 'Com autorização, dados pertinentes são enviados ao LaudIA como contexto auxiliar' },
-                  { step: 4, title: 'Elaborar laudo', desc: 'LaudIA usa informações como auxílio, mantendo fontes identificáveis' },
-                  { step: 5, title: 'Revisar e validar', desc: 'Profissional revisa e valida o conteúdo final' },
+                  { step: 1, title: 'Selecionar instrumento', desc: 'Profissional seleciona e aplica instrumento compatvel no Instrument.IA' },
+                  { step: 2, title: 'Organizar resultados', desc: 'Resultados so organizados e apresentados com contexto' },
+                  { step: 3, title: 'Enviar ao LaudIA', desc: 'Com autorizao, dados pertinentes so enviados ao LaudIA como contexto auxiliar' },
+                  { step: 4, title: 'Elaborar laudo', desc: 'LaudIA usa informaes como auxlio, mantendo fontes identificveis' },
+                  { step: 5, title: 'Revisar e validar', desc: 'Profissional revisa e valida o contedo final' },
                 ]).map((flow, index) => (
                   <FadeIn key={index} delay={index * 0.1}>
                     <div className='relative flex items-start gap-6 md:grid md:grid-cols-[1fr_48px_1fr] md:items-center'>
@@ -297,7 +297,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className={'md:' + (index % 2 === 0 ? 'order-3 pl-8' : 'text-right pr-8')}>
-                        <div className={inline-flex flex-col items-\ gap-2}>
+                        <div className={'inline-flex flex-col items-' + (index % 2 === 0 ? 'end' : 'start') + ' gap-2'}>
                           <div className='rounded-xl bg-card border border-border/70 p-6 md:w-64'>
                             {index === 0 && (
                               <>
@@ -326,7 +326,7 @@ export default function HomePage() {
                             {index === 4 && (
                               <>
                                 <ShieldCheck className='h-8 w-8 text-primary mx-auto mb-2' />
-                                <p className='text-sm text-muted-foreground text-center'>Validação Profissional</p>
+                                <p className='text-sm text-muted-foreground text-center'>Validao Profissional</p>
                               </>
                             )}
                           </div>
