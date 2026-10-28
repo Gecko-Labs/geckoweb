@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Code2, ShieldCheck, Zap, Download } from "lucide-react";
+import { ArrowRight, Code2, ShieldCheck, Zap, Download, Database, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { useI18n } from "../context/I18nContext";
@@ -27,6 +27,41 @@ function LetterByLetter({ text, className = "" }) {
         </motion.span>
       ))}
     </span>
+  );
+}
+
+);
+}
+
+function EcosystemProductCard({ product, status, statusColor, action }) {
+  const statusColors = {
+    green: "bg-green-500/10 text-green-500 border-green-500/30",
+    amber: "bg-amber-500/10 text-amber-500 border-amber-500/30",
+    blue: "bg-blue-500/10 text-blue-500 border-blue-500/30",
+  };
+
+  return (
+    <motion.div
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -4 }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+      <div className="relative p-6 flex flex-col h-full">
+        <div className="flex items-center gap-2 mb-4">
+          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${statusColors[statusColor] || statusColors.green}`}>
+            {status}
+          </span>
+        </div>
+        <h3 className="font-display text-xl font-bold tracking-tight mb-2">{product.title}</h3>
+        <p className="text-sm text-muted-foreground flex-1 mb-6">{product.description}</p>
+        <div className="mt-auto pt-4 border-t border-border/50">
+          {action}
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -166,7 +201,6 @@ export default function HomePage() {
                 index={index}
               />
             ))}
-          </div>
-        </main>
+          </main>
   );
 }
