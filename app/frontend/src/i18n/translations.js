@@ -60,6 +60,7 @@ const translations = {
       currency: "Moeda",
       ecosystem: "Ecossistema",
       support: "Suporte",
+      downloadLauncher: "Baixar GeckoLauncher",
     },
 
     home: {
@@ -86,6 +87,38 @@ const translations = {
       ctaDescription:
         "Conheça nossas soluções e descubra o que podemos fazer pelo seu negócio.",
       ctaButton: "Conhecer soluções",
+
+      ecosystem: {
+        title: "Ecossistema Gecko Labs",
+        subtitle: "Um ecossistema de ferramentas que trabalham em conjunto para conectar avaliação, organização de informações e elaboração de laudos.",
+        integrationTitle: "Integração planejada",
+        integrationDescription: "O Instrument.II está em desenvolvimento. A integração com o LaudIA permitirá que resultados de instrumentos psicológicos sejam usados como contexto auxiliar na elaboração de laudos, mantendo fontes e resultados identificáveis.",
+        laudia: {
+          title: "LaudIA",
+          description: "Plataforma de IA para auxiliar na elaboração de laudos clínicos multiprofissionais fundamentados em evidências científicas.",
+          status: "Disponível",
+          statusColor: "green",
+        },
+        geckolauncher: {
+          title: "GeckoLauncher",
+          description: "Launcher para acessar e gerenciar os softwares da Gecko Labs. Download gratuito do instalador.",
+          status: "Disponível",
+          statusColor: "green",
+        },
+        instrumentia: {
+          title: "Instrument.IA",
+          description: "Coletânea de instrumentos para apoiar o processo de avaliação e a investigação de transtornos psicológicos.",
+          status: "Em breve",
+          statusColor: "amber",
+        },
+        integrationFlow: [
+          { step: 1, title: "Selecionar instrumento", desc: "Profissional seleciona e aplica instrumento compatível no Instrument.IA" },
+          { step: 2, title: "Organizar resultados", desc: "Resultados são organizados e apresentados com contexto" },
+          { step: 3, title: "Enviar ao LaudIA", desc: "Com autorização, dados pertinentes são enviados ao LaudIA como contexto auxiliar" },
+          { step: 4, title: "Elaborar laudo", desc: "LaudIA usa informações como auxílio, mantendo fontes identificáveis" },
+          { step: 5, title: "Revisar e validar", desc: "Profissional revisa e valida o conteúdo final" },
+        ],
+      },
 
       hero: {
         title: "Software construído para criar mais.",
@@ -323,6 +356,7 @@ const translations = {
       currency: "Currency",
       ecosystem: "Ecosystem",
       support: "Support",
+      downloadLauncher: "Download GeckoLauncher",
     },
 
     home: {
@@ -349,6 +383,38 @@ const translations = {
       ctaDescription:
         "Explore our solutions and discover what we can do for your business.",
       ctaButton: "Explore solutions",
+
+      ecosystem: {
+        title: "Gecko Labs Ecosystem",
+        subtitle: "An ecosystem of tools that work together to connect assessment, information organization, and report writing.",
+        integrationTitle: "Planned Integration",
+        integrationDescription: "Instrument.IA is under development. Integration with LaudIA will allow psychological instrument results to be used as auxiliary context in report writing, keeping sources and results identifiable.",
+        laudia: {
+          title: "LaudIA",
+          description: "AI platform to assist in writing multi-professional clinical reports grounded in scientific evidence.",
+          status: "Available",
+          statusColor: "green",
+        },
+        geckolauncher: {
+          title: "GeckoLauncher",
+          description: "Launcher to access and manage Gecko Labs software. Free installer download.",
+          status: "Available",
+          statusColor: "green",
+        },
+        instrumentia: {
+          title: "Instrument.IA",
+          description: "Collection of instruments to support psychological assessment and investigation processes.",
+          status: "Coming soon",
+          statusColor: "amber",
+        },
+        integrationFlow: [
+          { step: 1, title: "Select instrument", desc: "Professional selects and applies compatible instrument in Instrument.IA" },
+          { step: 2, title: "Organize results", desc: "Results are organized and presented with context" },
+          { step: 3, title: "Send to LaudIA", desc: "With authorization, relevant data is sent to LaudIA as auxiliary context" },
+          { step: 4, title: "Write report", desc: "LaudIA uses information as aid, keeping sources identifiable" },
+          { step: 5, title: "Review and validate", desc: "Professional reviews and validates final content" },
+        ],
+      },
 
       hero: {
         title: "Software built to create more.",
