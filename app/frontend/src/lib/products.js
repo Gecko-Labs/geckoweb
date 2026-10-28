@@ -114,7 +114,9 @@ const CONTENT = {
 };
 
 const fromApi = (p) => {
-  const slug = p.code.toLowerCase();
+  // Derivar slug de forma segura - a API pode retornar code, slug ou productCode
+  const rawSlug = p.code ?? p.slug ?? p.productCode ?? "";
+  const slug = String(rawSlug).toLowerCase();
   const prices = {};
   // A API já retorna priceBrl e priceUsd em centavos (inteiros). Não multiplicar por 100.
   (p.plans || []).forEach((pl) => {
@@ -144,25 +146,27 @@ const fromApi = (p) => {
       if (finalPrices[tier].brl != null) finalPrices[tier].standard = finalPrices[tier].brl;
     });
   }
+  // Garantir que campos de array sejam sempre arrays, mesmo se CONTENT tiver valores inválidos
+  const ensureArray = (val, fallback) => Array.isArray(val) ? val : fallback;
   return {
     slug,
-    name: p.name,
-    tagline: p.description || "",
+    name: p.name ?? "",
+    tagline: p.description ?? "",
     category: "Software",
-    version: `v${p.version}`,
+    version: `v${p.version ?? "0"}`,
     badge: "",
     rating: 5,
     reviews_count: 0,
     featured: false,
-    short_desc: p.description || "",
-    description: p.description || "",
-    compatibility: ["Windows 10/11"],
-    tags: [],
-    features: [],
-    requirements: { os: "Windows 10/11", memory: "—", runtime: "—", deps: "—" },
-    faq: [],
-    image: img,
-    gallery: [img],
+    short_desc: p.description ?? "",
+    description: p.description ?? "",
+    compatibility: ensureArray(content.compatibility, ["Windows 10/11"]),
+    tags: ensureArray(content.tags, []),
+    features: ensureArray(content.features, []),
+    requirements: content.requirements ?? { os: "Windows 10/11", memory: "—", runtime: "—", deps: "—" },
+    faq: ensureArray(content.faq, []),
+    image: content.image ?? img,
+    gallery: ensureArray(content.gallery, [img]),
     ...content,
     prices: finalPrices,
   };
@@ -206,12 +210,16 @@ export const toCheckoutItem = (item) => ({
 
 export async function fetchProducts() {
   const { data } = await api.get("/products");
-  return { data: data.map(fromApi) };
+  // A API pode retornar um array direto ou um objeto { items: [...], data: [...] }
+  const productsArray = Array.isArray(data) ? data : (data.items ?? data.data ?? []);
+  return { data: productsArray.map(fromApi) };
 }
 
 export async function fetchProduct(slug) {
   const { data } = await api.get(`/products/${slug.toUpperCase()}`);
-  return { data: fromApi(data) };
+  // A API pode retornar o produto diretamente ou envolto em { data: {...} }
+  const productData = data.product ?? data;
+  return { data: fromApi(productData) };
 }
 
 export async function fetchMyLicenses() {
@@ -221,7 +229,9 @@ export async function fetchMyLicenses() {
 
 export async function fetchMyOrders() {
   const { data } = await api.get("/checkout/orders");
-  return { data: data.map(fromOrder) };
+  // A API pode retornar um array direto ou um objeto { items: [...], data: [...] }
+  const ordersArray = Array.isArray(data) ? data : (data.items ?? data.data ?? []);
+  return { data: ordersArray.map(fromOrder) };
 }
 
 export async function fetchOrder(id) {
