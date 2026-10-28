@@ -1,6 +1,9 @@
 
 const translations = {
   "pt-BR": {
+    nav: {
+      download: "Baixar GeckoLauncher",
+    },
     common: {
       home: "Início",
       products: "Produtos",
