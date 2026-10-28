@@ -136,6 +136,8 @@ function Shell() {
             element={<ResetPasswordPage />}
           />
 
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
           <Route
             path="/account"
             element={
