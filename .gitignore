@@ -23,3 +23,4 @@ fix/
 .vs
 app.zip
 app/fix.ps1
+app/frontend/.env.example
