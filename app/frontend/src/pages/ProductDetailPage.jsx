@@ -222,7 +222,7 @@ export default function ProductDetailPage() {
                   data-testid="product-download-free"
                   className="flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:shadow-xl hover:shadow-primary/25 active:scale-[0.98]"
                 >
-                  <Download className="h-4 w-4" /> Baixar grátis
+                  <Download className="h-4 w-4" /> Começar grátis
                 </a>
               </div>
             ) : (
