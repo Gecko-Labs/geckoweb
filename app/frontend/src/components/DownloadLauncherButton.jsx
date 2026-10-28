@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 
-import { API_BASE, api } from "../lib/api";
 import { useI18n } from "../context/I18nContext";
 
 const STYLES = {
@@ -24,7 +23,7 @@ export default function DownloadLauncherButton({ variant = "primary", showInfo =
   return (
     <span className="inline-flex flex-col items-start gap-1.5">
       <a
-        href={`${API_BASE}/launcher/download`}
+        href="/geckolicense/download/"
         data-testid="download-launcher"
         className={STYLES[variant] || STYLES.primary}
       >
