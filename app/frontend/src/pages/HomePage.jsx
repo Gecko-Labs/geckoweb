@@ -4,11 +4,11 @@ import { ArrowRight, Code2, ShieldCheck, Zap, Download, Database, FileText } fro
 import { motion } from 'framer-motion';
 
 import { useI18n } from '../context/I18nContext';
-import { api } from '../lib/api';
 import { ProductCard } from '../components/ProductCard';
 import DownloadLauncherButton from '../components/DownloadLauncherButton';
 import { SectionHeading } from '../components/SectionHeading';
 import { FadeIn } from '../components/Reveal';
+import { fetchProducts } from '../lib/products';
 
 function LetterByLetter({ text, className = '' }) {
   const words = text.split(' ');
@@ -66,8 +66,7 @@ export default function HomePage() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    api
-      .get('/products')
+    fetchProducts()
       .then(({ data }) => setProducts(Array.isArray(data) ? data : []))
       .catch(() => setProducts([]));
   }, []);
