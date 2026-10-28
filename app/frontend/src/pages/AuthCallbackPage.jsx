@@ -8,6 +8,26 @@ import { useAuth } from "../context/AuthContext";
 import { GeckoMark } from "../components/GeckoMark";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
+// Helper to parse params from both query string and URL fragment
+function getCallbackParams(searchParams, hash) {
+  const params = {};
+  
+  // From query string
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+  
+  // From fragment (hash)
+  if (hash) {
+    const hashParams = new URLSearchParams(hash.replace(/^#/, ""));
+    hashParams.forEach((value, key) => {
+      params[key] = value;
+    });
+  }
+  
+  return params;
+}
+
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -19,11 +39,14 @@ export default function AuthCallbackPage() {
     let cancelled = false;
 
     const handleCallback = async () => {
-      const token = searchParams.get("token");
-      const error = searchParams.get("error");
-      const errorDescription = searchParams.get("error_description");
+      // Parse params from both query string and fragment
+      const params = getCallbackParams(searchParams, window.location.hash);
+      
+      const token = params.token;
+      const error = params.error;
+      const errorDescription = params.error_description;
 
-      // Clean up URL immediately
+      // Clean up URL immediately (remove token from history)
       if (window.history.replaceState) {
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, document.title, cleanUrl);
@@ -58,7 +81,7 @@ export default function AuthCallbackPage() {
         toast.success("Login com Google realizado com sucesso");
 
         // Redirect to intended page or account
-        const from = searchParams.get("from") || "/account";
+        const from = params.from || "/account";
         if (!cancelled) navigate(from, { replace: true });
       } catch (err) {
         clearAuthToken();
