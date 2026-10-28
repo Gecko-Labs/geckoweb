@@ -2,7 +2,7 @@
 import { Languages } from "lucide-react";
 
 import { useI18n } from "../context/I18nContext";
-import { useCurrency } from "../context/CurrencyContext";
+import { useCurrency } from "../lib/currency";
 
 export function LocaleSwitcher() {
   const { locale, setLocale } = useI18n();
