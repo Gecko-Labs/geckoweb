@@ -5,28 +5,28 @@ import { toast } from "sonner";
 
 import { useCart } from "../context/CartContext";
 import { useCurrency } from "../lib/currency";
+import { useI18n } from "../context/I18nContext";
 
 export function ProductCard({ product, owned = false, index = 0 }) {
   const { addItem, hasItem } = useCart();
   const { format, currency, formatConverted } = useCurrency();
+  const { t } = useI18n();
   const inCart = hasItem(product.slug);
-  const isFree =
-    product.billingModel === "free" ||
-    (product.prices.standard &&
-      Object.values(product.prices.standard).every((v) => v == null || v === 0));
+  const isFree = product.billingModel === "free";
 
-  // Obtém o preço oficial na moeda selecionada. Se não houver preço oficial
-  // para essa moeda, usa o preço BRL como fallback (compatibilidade).
-  const priceObj = product.prices.standard ?? {};
-  const priceCents =
-    priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.standard ?? 0;
-  const priceUsdFallback =
-    currency === "USD" && !priceObj.usd
-      ? formatConverted(priceObj.brl ?? priceObj.standard ?? 0)
-      : null;
+  // Verifica se há preço válido para o tier standard na moeda atual
+  const priceObj = product.prices?.standard ?? {};
+  const hasValidPrice = priceObj && (priceObj[currency.toLowerCase()] != null || priceObj.brl != null || priceObj.usd != null);
+  const priceCents = hasValidPrice
+    ? (priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.usd ?? 0)
+    : null;
 
   const handleAdd = (e) => {
     e.preventDefault();
+    if (!hasValidPrice) {
+      toast.error(t("product.priceUnavailable", "Preço indisponível no momento"));
+      return;
+    }
     addItem(product, "standard");
     toast.success(`${product.name} adicionado ao carrinho`);
   };
@@ -78,9 +78,9 @@ export function ProductCard({ product, owned = false, index = 0 }) {
               {product.rating} <span className="text-muted-foreground/60">({product.reviews_count})</span>
             </div>
             <p className="mt-1 font-display text-2xl font-bold tracking-tight">
-              {isFree ? "Grátis" : priceUsdFallback ?? format(priceCents)}
+              {isFree ? "Grátis" : hasValidPrice ? format(priceCents) : t("product.priceUnavailable", "Preço indisponível")}
             </p>
-            {product.billingModel === "one-time" && (
+            {product.billingModel === "one-time" && hasValidPrice && (
               <span className="mt-0.5 font-mono text-[10px] text-primary/70 uppercase tracking-wider">
                 Pagamento único
               </span>
@@ -111,7 +111,7 @@ export function ProductCard({ product, owned = false, index = 0 }) {
             >
               No carrinho →
             </Link>
-          ) : (
+          ) : hasValidPrice ? (
             <button
               type="button"
               onClick={handleAdd}
@@ -120,6 +120,16 @@ export function ProductCard({ product, owned = false, index = 0 }) {
               className="flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 active:scale-95"
             >
               <ShoppingCart className="h-3.5 w-3.5" /> Adicionar
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled
+              data-testid={`add-to-cart-button-${product.slug}`}
+              aria-label={t("product.priceUnavailable", "Preço indisponível")}
+              className="flex items-center gap-1.5 rounded-md bg-muted px-3.5 py-2 text-xs font-semibold text-muted-foreground cursor-not-allowed"
+            >
+              <ShoppingCart className="h-3.5 w-3.5" /> {t("product.priceUnavailable", "Preço indisponível")}
             </button>
           )}
         </div>
