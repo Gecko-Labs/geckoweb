@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useCurrency } from "../lib/currency";
+import { useI18n } from "../context/I18nContext";
 import { FadeIn } from "../components/Reveal";
 import { Skeleton } from "../components/ui/skeleton";
 import { fetchProduct, fetchMyLicenses } from "../lib/products";
