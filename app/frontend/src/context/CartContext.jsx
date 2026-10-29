@@ -20,7 +20,16 @@ export function CartProvider({ children }) {
     } catch (e) {}
   }, [items]);
 
+  // Verifica se o produto tem preço válido para o tier
+  function hasValidPrice(product, tier) {
+    const priceObj = product.prices?.[tier] ?? {};
+    return priceObj && (priceObj.brl != null || priceObj.usd != null || priceObj.standard != null);
+  }
+
   const addItem = useCallback((product, tier = "standard") => {
+    if (!hasValidPrice(product, tier)) {
+      return; // Não adiciona itens sem preço válido
+    }
     setItems((prev) => {
       if (prev.some((i) => i.slug === product.slug && i.tier === tier)) return prev;
       const priceObj = product.prices[tier] ?? {};
@@ -32,7 +41,7 @@ export function CartProvider({ children }) {
           name: product.name,
           tagline: product.tagline,
           image: product.image,
-          price: priceObj.brl ?? priceObj.standard ?? 0,
+          price: priceObj.brl ?? priceObj.usd ?? priceObj.standard ?? 0,
           priceUsd: priceObj.usd ?? null,
           priceObj,
         },
