@@ -13,6 +13,7 @@ import {
   getAuthToken,
   setAuthToken,
 } from "../lib/api";
+import { fetchMyLicenses } from "../lib/products";
 
 const AuthContext = createContext(null);
 
@@ -30,6 +31,8 @@ export function AuthProvider({ children }) {
   // null = visitante desconectado
   // objeto = usuário autenticado
   const [user, setUser] = useState(undefined);
+  const [licenses, setLicenses] = useState([]);
+  const [licensesVersion, setLicensesVersion] = useState(0);
 
   const refresh = useCallback(async () => {
     const token = getAuthToken();
@@ -37,6 +40,7 @@ export function AuthProvider({ children }) {
     // Não consultar /auth/me para visitantes sem token.
     if (!token) {
       setUser(null);
+      setLicenses([]);
       return null;
     }
 
@@ -52,6 +56,7 @@ export function AuthProvider({ children }) {
         // Token rejeitado pela API.
         clearAuthToken();
         setUser(null);
+        setLicenses([]);
         return null;
       }
 
@@ -59,6 +64,22 @@ export function AuthProvider({ children }) {
       // automaticamente um token potencialmente válido.
       setUser(null);
       return null;
+    }
+  }, []);
+
+  const refreshLicenses = useCallback(async () => {
+    const token = getAuthToken();
+    if (!token) {
+      setLicenses([]);
+      return [];
+    }
+    try {
+      const { data } = await fetchMyLicenses();
+      setLicenses(data);
+      setLicensesVersion((v) => v + 1);
+      return data;
+    } catch {
+      return [];
     }
   }, []);
 
@@ -71,6 +92,7 @@ export function AuthProvider({ children }) {
       if (!token) {
         if (active) {
           setUser(null);
+          setLicenses([]);
         }
         return;
       }
@@ -118,14 +140,16 @@ export function AuthProvider({ children }) {
       const currentUser = normalizeUser(me);
 
       setUser(currentUser);
+      await refreshLicenses();
 
       return currentUser;
     } catch (error) {
       clearAuthToken();
       setUser(null);
+      setLicenses([]);
       throw error;
     }
-  }, []);
+  }, [refreshLicenses]);
 
   const register = useCallback(async (name, email, password) => {
     const { data } = await api.post("/auth/tenant/register", {
@@ -145,28 +169,34 @@ export function AuthProvider({ children }) {
       const currentUser = normalizeUser(me);
 
       setUser(currentUser);
+      await refreshLicenses();
 
       return currentUser;
     } catch (error) {
       clearAuthToken();
       setUser(null);
+      setLicenses([]);
       throw error;
     }
-  }, []);
+  }, [refreshLicenses]);
 
   const logout = useCallback(() => {
     clearAuthToken();
     setUser(null);
+    setLicenses([]);
   }, []);
 
   const value = {
     user,
+    licenses,
+    licensesVersion,
     loading: user === undefined,
     isAuthenticated: Boolean(user),
     login,
     register,
     logout,
     refresh,
+    refreshLicenses,
   };
 
   return (
