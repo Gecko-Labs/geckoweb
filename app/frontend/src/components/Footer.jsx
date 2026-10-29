@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Github, Linkedin, Twitter } from "lucide-react";
 
 import { GeckoMark } from "./GeckoMark";
+import { useI18n } from "../context/I18nContext";
 
 const COLUMNS = [
   {
@@ -39,6 +40,7 @@ const COLUMNS = [
 ];
 
 export function Footer() {
+  const { t } = useI18n();
   return (
     <footer className="border-t border-border/60 bg-card/40" data-testid="site-footer">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -92,6 +94,17 @@ export function Footer() {
               ))}
             </nav>
           ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <a
+            href="https://geckostore.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-muted-foreground transition-colors hover:text-primary"
+          >
+            {t("navbar.site")}
+          </a>
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-8 sm:flex-row">
