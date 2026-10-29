@@ -25,3 +25,4 @@ app.zip
 app/fix.ps1
 app/frontend/.env.example
 app/frontend/fix.ps1
+app/fix_checkout.py
