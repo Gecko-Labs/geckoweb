@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState, useCallback, Fragment } from "react";
 import { api } from "./api";
-import { useI18n } from "./i18n";
+import { useI18n } from "../context/I18nContext";
 
 const CurrencyContext = createContext(null);
 
 export function CurrencyProvider({ children }) {
-  const { lang } = useI18n();
+  const { locale } = useI18n();
   const [currency, setCurrencyState] = useState(
-    () => localStorage.getItem("gecko_currency") || (lang === "pt" ? "BRL" : "USD")
+    () => localStorage.getItem("gecko_currency") || (locale?.startsWith("pt") ? "BRL" : "USD")
   );
   // Taxa de câmbio USD por BRL. Valor inicial neutro até a API responder.
   const [usdPerBrl, setUsdPerBrl] = useState(null);
