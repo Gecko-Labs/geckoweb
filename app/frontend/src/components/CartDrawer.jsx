@@ -4,11 +4,20 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { useCart } from "../context/CartContext";
 import { useCurrency } from "../lib/currency";
+import { useI18n } from "../context/I18nContext";
 
 export function CartDrawer() {
-  const { drawerOpen, setDrawerOpen, items, removeItem, subtotal } = useCart();
-  const { format, currency, formatConverted } = useCurrency();
+  const { drawerOpen, setDrawerOpen, items, removeItem } = useCart();
+  const { format, currency } = useCurrency();
+  const { t } = useI18n();
   const navigate = useNavigate();
+
+  const getItemPrice = (item) => {
+    const priceObj = item.priceObj ?? {};
+    return priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.usd ?? 0;
+  };
+
+  const getSubtotal = () => items.reduce((sum, item) => sum + getItemPrice(item), 0);
 
   const goCheckout = () => {
     setDrawerOpen(false);
@@ -57,13 +66,13 @@ export function CartDrawer() {
               {items.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
                   <ShoppingCart className="h-10 w-10 text-muted-foreground/40" />
-                  <p className="text-sm text-muted-foreground">Seu carrinho está vazio.</p>
+                  <p className="text-sm text-muted-foreground">{t("cart.empty", "Seu carrinho está vazio.")}</p>
                   <Link
                     to="/products"
                     onClick={() => setDrawerOpen(false)}
                     className="font-mono text-xs uppercase tracking-widest text-primary hover:underline"
                   >
-                    Explorar softwares
+                    {t("cart.exploreProducts", "Explorar softwares")}
                   </Link>
                 </div>
               ) : (
@@ -89,9 +98,7 @@ export function CartDrawer() {
                           Licença {item.tier === "enterprise" ? "Enterprise" : "Standard"}
                         </p>
                         <p className="mt-auto font-mono text-sm font-bold text-primary">
-                          {currency === "USD" && item.priceObj?.usd
-                            ? format(item.priceObj.usd)
-                            : formatConverted(item.price) ?? format(item.price)}
+                          {format(getItemPrice(item))}
                         </p>
                       </div>
                       <button
@@ -112,9 +119,9 @@ export function CartDrawer() {
             {items.length > 0 && (
               <div className="border-t border-border px-6 py-5">
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Subtotal</span>
+                  <span className="text-sm text-muted-foreground">{t("cart.subtotal", "Subtotal")}</span>
                   <span className="font-display text-xl font-bold" data-testid="cart-drawer-subtotal">
-                    {currency === "USD" ? (formatConverted(subtotal) ?? format(subtotal)) : format(subtotal)}
+                    {format(getSubtotal())}
                   </span>
                 </div>
                 <button
@@ -123,14 +130,14 @@ export function CartDrawer() {
                   data-testid="cart-drawer-checkout-button"
                   className="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]"
                 >
-                  Finalizar compra <ArrowRight className="h-4 w-4" />
+                  {t("cart.goToCheckout", "Finalizar compra")} <ArrowRight className="h-4 w-4" />
                 </button>
                 <Link
                   to="/cart"
                   onClick={() => setDrawerOpen(false)}
                   className="mt-2 block text-center font-mono text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  Ver carrinho completo
+                  {t("cart.viewFullCart", "Ver carrinho completo")}
                 </Link>
               </div>
             )}
