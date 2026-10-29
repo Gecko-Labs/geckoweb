@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Check, Copy, ShieldCheck, ShoppingCart, Star, Terminal, Download } from "lucide-react";
 import { motion } from "framer-motion";
@@ -10,7 +10,7 @@ import { useCurrency } from "../lib/currency";
 import { useI18n } from "../context/I18nContext";
 import { FadeIn } from "../components/Reveal";
 import { Skeleton } from "../components/ui/skeleton";
-import { fetchProduct, fetchMyLicenses } from "../lib/products";
+import { fetchProduct } from "../lib/products";
 import {
   Accordion,
   AccordionContent,
@@ -26,47 +26,61 @@ const TIERS = [
 export default function ProductDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, licenses, licensesVersion } = useAuth();
   const { addItem, hasItem } = useCart();
-  const { format, currency, formatConverted } = useCurrency();
+  const { format, currency } = useCurrency();
+  const { t } = useI18n();
   const [product, setProduct] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [tier, setTier] = useState("standard");
   const [activeImage, setActiveImage] = useState(0);
-  const [owned, setOwned] = useState(false);
+
+  const owned = useMemo(
+    () => licenses.some((l) => l.product_slug === product?.slug && l.status === "active"),
+    [licenses, licensesVersion, product?.slug],
+  );
 
   useEffect(() => {
     setProduct(null);
     setNotFound(false);
+    setLoadError(false);
     setActiveImage(0);
     fetchProduct(slug)
       .then(({ data }) => setProduct(data))
       .catch((err) => {
-        if (err.status === 404) {
+        if (err?.status === 404) {
           setNotFound(true);
         } else {
-          setNotFound(true);
+          setLoadError(true);
         }
       });
   }, [slug]);
-
-  useEffect(() => {
-    if (!user || !product) return setOwned(false);
-    fetchMyLicenses()
-      .then(({ data }) => {
-        setOwned(data.some((l) => l.product_slug === product.slug && l.status === "active"));
-      })
-      .catch(() => {});
-  }, [user, product]);
 
   if (notFound) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-4" data-testid="product-not-found">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-primary">404 // NOT FOUND</p>
-        <h1 className="font-display text-4xl font-bold uppercase">Produto não encontrado</h1>
+        <h1 className="font-display text-4xl font-bold uppercase">{t("product.notFound", "Produto não encontrado")}</h1>
         <Link to="/products" className="mt-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
-          Voltar ao catálogo
+          {t("common.back", "Voltar ao catálogo")}
         </Link>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-4" data-testid="product-load-error">
+        <p className="font-mono text-xs uppercase tracking-[0.3em] text-destructive">ERROR // LOAD FAILED</p>
+        <h1 className="font-display text-4xl font-bold uppercase">{t("product.loadError", "Erro ao carregar o produto")}</h1>
+        <p className="text-sm text-muted-foreground max-w-md text-center">{t("product.loadErrorDesc", "Não foi possível carregar os detalhes do produto. Tente novamente mais tarde.")}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground"
+        >
+          {t("common.retry", "Tentar novamente")}
+        </button>
       </main>
     );
   }
@@ -80,21 +94,27 @@ export default function ProductDetailPage() {
   }
 
   const inCart = hasItem(product.slug);
-  const priceObj = product.prices[tier] ?? {};
-  const priceCents =
-    priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.standard ?? 0;
-  const priceUsdFallback =
-    currency === "USD" && !priceObj.usd
-      ? formatConverted(priceObj.brl ?? priceObj.standard ?? 0)
-      : null;
-  const isFreeProduct = product.billingModel === "free" || product.prices.standard === 0;
+  const priceObj = product.prices?.[tier] ?? {};
+  const hasValidPrice = priceObj && (priceObj[currency.toLowerCase()] != null || priceObj.brl != null || priceObj.usd != null);
+  const priceCents = hasValidPrice
+    ? (priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.usd ?? 0)
+    : null;
+  const isFreeProduct = product.billingModel === "free";
 
   const handleAdd = () => {
+    if (!hasValidPrice && !isFreeProduct) {
+      toast.error(t("product.priceUnavailable", "Preço indisponível no momento"));
+      return;
+    }
     addItem(product, tier);
     toast.success(`${product.name} (${tier === "enterprise" ? "Enterprise" : "Standard"}) no carrinho`);
   };
 
   const handleBuyNow = () => {
+    if (!hasValidPrice && !isFreeProduct) {
+      toast.error(t("product.priceUnavailable", "Preço indisponível no momento"));
+      return;
+    }
     addItem(product, tier);
     navigate("/checkout");
   };
@@ -179,42 +199,46 @@ export default function ProductDetailPage() {
 
             <fieldset className="mt-6">
               <legend className="mb-3 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Tipo de licença
+                {t("product.licenseType", "Tipo de licença")}
               </legend>
               <div className="grid grid-cols-1 gap-2.5">
-                {TIERS.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setTier(t.id)}
-                    aria-pressed={tier === t.id}
-                    data-testid={`license-tier-${t.id}`}
-                    className={`flex items-center justify-between rounded-lg border px-4 py-3.5 text-left transition-all duration-200 ${
-                      tier === t.id
-                        ? "border-primary bg-primary/10 shadow-lg shadow-primary/5"
-                        : "border-border hover:border-primary/40"
-                    }`}
-                  >
-                    <span>
-                      <span className="block text-sm font-semibold">{t.name}</span>
-                      <span className="block font-mono text-[10px] text-muted-foreground">{t.desc}</span>
-                    </span>
-                    <span className="font-mono text-sm font-bold text-primary">
-                      {(() => {
-                        const p = product.prices[t.id] ?? {};
-                        const pc = p[currency.toLowerCase()] ?? p.brl ?? p.standard ?? 0;
-                        const puf = currency === "USD" && !p.usd ? formatConverted(p.brl ?? p.standard ?? 0) : null;
-                        return puf ?? format(pc);
-                      })()}
-                    </span>
-                  </button>
-                ))}
+                {TIERS.map((t) => {
+                  const tierPriceObj = product.prices?.[t.id] ?? {};
+                  const tierHasValidPrice = tierPriceObj && (tierPriceObj[currency.toLowerCase()] != null || tierPriceObj.brl != null || tierPriceObj.usd != null);
+                  const tierPriceCents = tierHasValidPrice
+                    ? (tierPriceObj[currency.toLowerCase()] ?? tierPriceObj.brl ?? tierPriceObj.usd ?? 0)
+                    : null;
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => setTier(t.id)}
+                      aria-pressed={tier === t.id}
+                      data-testid={`license-tier-${t.id}`}
+                      className={`flex items-center justify-between rounded-lg border px-4 py-3.5 text-left transition-all duration-200 ${
+                        tier === t.id
+                          ? "border-primary bg-primary/10 shadow-lg shadow-primary/5"
+                          : "border-border hover:border-primary/40"
+                      }`}
+                    >
+                      <span>
+                        <span className="block text-sm font-semibold">{t.name}</span>
+                        <span className="block font-mono text-[10px] text-muted-foreground">{t.desc}</span>
+                      </span>
+                      <span className="font-mono text-sm font-bold text-primary">
+                        {tierHasValidPrice ? format(tierPriceCents) : t(tier === "standard" ? "product.priceUnavailable" : "product.priceUnavailableEnterprise", tier === "standard" ? "Preço indisponível" : "Preço enterprise indisponível")}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </fieldset>
 
             <div className="mt-6 flex items-end justify-between border-t border-border/60 pt-5">
-              <span className="text-sm text-muted-foreground">Total</span>
-              <span className="font-display text-4xl font-black tracking-tight" data-testid="product-price">{priceUsdFallback ?? format(priceCents)}</span>
+              <span className="text-sm text-muted-foreground">{t("common.total", "Total")}</span>
+              <span className="font-display text-4xl font-black tracking-tight" data-testid="product-price">
+                {isFreeProduct ? t("common.free", "Grátis") : hasValidPrice ? format(priceCents) : t("product.priceUnavailable", "Preço indisponível")}
+              </span>
             </div>
 
             {owned ? (
@@ -236,10 +260,10 @@ export default function ProductDetailPage() {
                   data-testid="product-download-free"
                   className="flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:shadow-xl hover:shadow-primary/25 active:scale-[0.98]"
                 >
-                  <Download className="h-4 w-4" /> Começar grátis
+                  <Download className="h-4 w-4" /> {t("product.startFree", "Começar grátis")}
                 </a>
               </div>
-            ) : (
+            ) : hasValidPrice ? (
               <div className="mt-5 flex gap-3">
                 {inCart ? (
                   <Link
@@ -247,7 +271,7 @@ export default function ProductDetailPage() {
                     data-testid="product-in-cart-button"
                     className="flex flex-1 items-center justify-center gap-2 rounded-md border border-primary/40 px-4 py-3.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
                   >
-                    <Check className="h-4 w-4" /> No carrinho
+                    <Check className="h-4 w-4" /> {t("product.inCart", "No carrinho")}
                   </Link>
                 ) : (
                   <button
@@ -256,7 +280,7 @@ export default function ProductDetailPage() {
                     data-testid="product-add-to-cart"
                     className="flex flex-1 items-center justify-center gap-2 rounded-md border border-primary/40 px-4 py-3.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 active:scale-[0.98]"
                   >
-                    <ShoppingCart className="h-4 w-4" /> Adicionar
+                    <ShoppingCart className="h-4 w-4" /> {t("product.addToCart", "Adicionar")}
                   </button>
                 )}
                 <button
@@ -265,7 +289,26 @@ export default function ProductDetailPage() {
                   data-testid="product-buy-now"
                   className="flex-1 rounded-md bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:shadow-xl hover:shadow-primary/25 active:scale-[0.98]"
                 >
-                  Comprar agora
+                  {t("product.buyNow", "Comprar agora")}
+                </button>
+              </div>
+            ) : (
+              <div className="mt-5 flex gap-3">
+                <button
+                  type="button"
+                  disabled
+                  data-testid="product-add-to-cart"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-md border border-muted px-4 py-3.5 text-sm font-semibold text-muted-foreground cursor-not-allowed"
+                >
+                  <ShoppingCart className="h-4 w-4" /> {t("product.priceUnavailable", "Preço indisponível")}
+                </button>
+                <button
+                  type="button"
+                  disabled
+                  data-testid="product-buy-now"
+                  className="flex-1 rounded-md bg-muted px-4 py-3.5 text-sm font-semibold text-muted-foreground cursor-not-allowed"
+                >
+                  {t("product.buyNow", "Comprar agora")}
                 </button>
               </div>
             )}
