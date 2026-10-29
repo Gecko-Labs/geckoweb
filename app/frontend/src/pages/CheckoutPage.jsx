@@ -18,14 +18,16 @@ export default function CheckoutPage() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
-  // Verifica se todos os itens têm preços oficiais válidos para a moeda atual
+  // Verifica se todos os itens tï¿½m preï¿½os oficiais vï¿½lidos para a moeda atual.
+  // Aceita preÃ§o zero quando explicitamente retornado pela API (ex: produtos de teste no Stripe).
+  // Rejeita preÃ§o ausente (null/undefined), invÃ¡lido (nÃ£o-numÃ©rico) ou ausente do objeto.
   const hasValidPrices = items.every((item) => {
     const priceObj = item.priceObj ?? {};
     const priceForCurrency = priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.usd;
-    return priceForCurrency != null && priceForCurrency > 0;
+    return priceForCurrency != null && typeof priceForCurrency === "number" && !isNaN(priceForCurrency);
   });
 
-  // Calcula totais usando apenas preços oficiais (sem conversão cambial)
+  // Calcula totais usando apenas preï¿½os oficiais (sem conversï¿½o cambial)
   const getItemPrice = (item) => {
     const priceObj = item.priceObj ?? {};
     return priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.usd ?? 0;
@@ -37,7 +39,7 @@ export default function CheckoutPage() {
 
   const handleCheckout = async () => {
     if (!hasValidPrices) {
-      toast.error(t("checkout.priceUnavailable", "Preço indisponível para um ou mais itens. Verifique o catálogo."));
+      toast.error(t("checkout.priceUnavailable", "Preï¿½o indisponï¿½vel para um ou mais itens. Verifique o catï¿½logo."));
       return;
     }
 
@@ -50,7 +52,7 @@ export default function CheckoutPage() {
       });
       window.location.href = data.checkout_url ?? data.checkoutUrl;
     } catch (err) {
-      toast.error(apiError(err, t("checkout.error", "Não foi possível iniciar o pagamento")));
+      toast.error(apiError(err, t("checkout.error", "Nï¿½o foi possï¿½vel iniciar o pagamento")));
       setLoading(false);
     }
   };
@@ -58,7 +60,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-4" data-testid="checkout-empty">
-        <p className="text-muted-foreground">{t("checkout.empty", "Seu carrinho está vazio.")}</p>
+        <p className="text-muted-foreground">{t("checkout.empty", "Seu carrinho estï¿½ vazio.")}</p>
         <Link to="/products" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
           {t("common.explore", "Explorar softwares")}
         </Link>
@@ -72,7 +74,7 @@ export default function CheckoutPage() {
         <p className="font-mono text-xs uppercase tracking-[0.25em] text-primary">{t("checkout.title", "Checkout")}</p>
         <h1 className="mt-2 font-display text-4xl font-bold uppercase tracking-tight">{t("checkout.subtitle", "Finalizar pedido")}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {t("checkout.buyingAs", "Comprando como")} <span className="font-mono text-foreground">{user?.email}</span> — {t("checkout.licensesLinked", "as licenças serão vinculadas a esta conta.")}
+          {t("checkout.buyingAs", "Comprando como")} <span className="font-mono text-foreground">{user?.email}</span> ï¿½ {t("checkout.licensesLinked", "as licenï¿½as serï¿½o vinculadas a esta conta.")}
         </p>
       </FadeIn>
 
@@ -141,7 +143,7 @@ export default function CheckoutPage() {
               {loading ? (
                 <>
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                  {t("checkout.redirecting", "Redirecionando para a Stripe…")}
+                  {t("checkout.redirecting", "Redirecionando para a Stripeï¿½")}
                 </>
               ) : (
                 <>
@@ -153,12 +155,12 @@ export default function CheckoutPage() {
             {!hasValidPrices && (
               <p className="mt-3 text-center text-sm text-destructive" role="alert">
                 <AlertCircle className="h-4 w-4 mx-auto mb-1" />
-                {t("checkout.priceUnavailable", "Preço indisponível para um ou mais itens. Verifique o catálogo.")}
+                {t("checkout.priceUnavailable", "Preï¿½o indisponï¿½vel para um ou mais itens. Verifique o catï¿½logo.")}
               </p>
             )}
             
             <p className="mt-4 text-center font-mono text-[10px] leading-relaxed tracking-wide text-muted-foreground">
-              {t("checkout.secureNote", "Você será redirecionado para o checkout seguro da Stripe. Nenhum dado de cartão passa pelos nossos servidores.")}
+              {t("checkout.secureNote", "Vocï¿½ serï¿½ redirecionado para o checkout seguro da Stripe. Nenhum dado de cartï¿½o passa pelos nossos servidores.")}
             </p>
           </div>
         </FadeIn>
