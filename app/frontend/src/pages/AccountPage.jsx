@@ -8,7 +8,7 @@ import { formatDate } from "../utils/format";
 import { useCurrency } from "../lib/currency";
 import { Skeleton } from "../components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { fetchMyLicenses, fetchMyOrders } from "../lib/products";
+import { fetchMyOrders } from "../lib/products";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,22 +37,16 @@ const STATUS_LABELS = {
 };
 
 export default function AccountPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, licenses, licensesVersion, refreshLicenses } = useAuth();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const tab = params.get("tab") || "licenses";
-  const [licenses, setLicenses] = useState(null);
   const [orders, setOrders] = useState(null);
   const { format, currency, formatConverted } = useCurrency();
 
-  const load = useCallback(() => {
-    fetchMyLicenses().then(({ data }) => setLicenses(data)).catch(() => setLicenses([]));
+  useEffect(() => {
     fetchMyOrders().then(({ data }) => setOrders(data)).catch(() => setOrders([]));
   }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
 
   const setTab = (t) => {
     params.set("tab", t);
@@ -68,7 +62,7 @@ export default function AccountPage() {
     try {
       await api.post(`/licenses/${key}/revoke`);
       toast.success("Licença revogada");
-      load();
+      await refreshLicenses();
     } catch (err) {
       toast.error(apiError(err));
     }
@@ -133,7 +127,7 @@ export default function AccountPage() {
         </TabsList>
 
         <TabsContent value="licenses" className="mt-8">
-          {licenses === null ? (
+          {user === undefined ? (
             <Skeleton className="h-40 rounded-xl" />
           ) : licenses.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border py-16 text-center" data-testid="licenses-empty">
