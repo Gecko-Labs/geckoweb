@@ -65,6 +65,7 @@ const translations = {
       support: "Suporte",
       downloadLauncher: "Baixar GeckoLauncher",
       download: "Baixar GeckoLauncher",
+      site: "geckostore.com",
     },
 
     home: {
@@ -362,6 +363,7 @@ const translations = {
       support: "Support",
       downloadLauncher: "Download GeckoLauncher",
       download: "Download GeckoLauncher",
+      site: "geckostore.com",
     },
 
     home: {
