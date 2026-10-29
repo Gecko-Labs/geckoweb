@@ -6,14 +6,26 @@ import { toast } from "sonner";
 import { api, apiError } from "../lib/api";
 import { useCart } from "../context/CartContext";
 import { useCurrency } from "../lib/currency";
+import { useI18n } from "../context/I18nContext";
 import { FadeIn } from "../components/Reveal";
 
 export default function CartPage() {
-  const { items, removeItem, subtotal, discount, total, promo, setPromo } = useCart();
-  const { format, currency, formatConverted } = useCurrency();
+  const { items, removeItem, promo, setPromo } = useCart();
+  const { format, currency } = useCurrency();
+  const { t } = useI18n();
   const [code, setCode] = useState(promo?.code || "");
   const [validating, setValidating] = useState(false);
   const navigate = useNavigate();
+
+  // Calcula preços usando apenas preços oficiais (sem conversão cambial)
+  const getItemPrice = (item) => {
+    const priceObj = item.priceObj ?? {};
+    return priceObj[currency.toLowerCase()] ?? priceObj.brl ?? priceObj.usd ?? 0;
+  };
+
+  const getSubtotal = () => items.reduce((sum, item) => sum + getItemPrice(item), 0);
+  const getDiscount = () => promo ? Math.round((getSubtotal() * promo.percent) / 100) : 0;
+  const getTotal = () => getSubtotal() - getDiscount();
 
   const applyPromo = async (e) => {
     e.preventDefault();
@@ -22,10 +34,10 @@ export default function CartPage() {
     try {
       const { data } = await api.post("/checkout/validate-promo", { code });
       setPromo(data);
-      toast.success(`Cupom ${data.code} aplicado: ${data.percent}% de desconto`);
+      toast.success(`${t("cart.couponApplied", "Cupom")} ${data.code} ${t("cart.couponDiscount", "aplicado:")} ${data.percent}% ${t("cart.discount", "de desconto")}`);
     } catch (err) {
       setPromo(null);
-      toast.error(apiError(err, "Cupom inválido"));
+      toast.error(apiError(err, t("cart.invalidCoupon", "Cupom inválido")));
     } finally {
       setValidating(false);
     }
@@ -41,13 +53,13 @@ export default function CartPage() {
       {items.length === 0 ? (
         <FadeIn delay={0.1} className="mt-14 flex flex-col items-center gap-4 rounded-xl border border-dashed border-border py-20 text-center">
           <ShoppingCart className="h-12 w-12 text-muted-foreground/30" />
-          <p className="text-muted-foreground">Seu carrinho está vazio.</p>
+          <p className="text-muted-foreground">{t("cart.empty", "Seu carrinho está vazio.")}</p>
           <Link
             to="/products"
             data-testid="cart-empty-cta"
             className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25"
           >
-            Explorar softwares
+            {t("cart.exploreProducts", "Explorar softwares")}
           </Link>
         </FadeIn>
       ) : (
@@ -65,9 +77,7 @@ export default function CartPage() {
                       Licença {item.tier === "enterprise" ? "Enterprise Vault" : "Standard Seat"}
                     </p>
                     <p className="mt-auto font-mono text-base font-bold text-primary">
-                      {currency === "USD" && item.priceObj?.usd
-                        ? format(item.priceObj.usd)
-                        : formatConverted(item.price) ?? format(item.price)}
+                      {format(getItemPrice(item))}
                     </p>
                   </div>
                   <button
@@ -113,23 +123,23 @@ export default function CartPage() {
 
               <dl className="mt-6 flex flex-col gap-3 border-t border-border/60 pt-5 text-sm">
                 <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Subtotal</dt>
+                  <dt className="text-muted-foreground">{t("cart.subtotal", "Subtotal")}</dt>
                   <dd className="font-mono" data-testid="cart-subtotal">
-                    {currency === "USD" ? (formatConverted(subtotal) ?? format(subtotal)) : format(subtotal)}
+                    {format(getSubtotal())}
                   </dd>
                 </div>
                 {promo && (
                   <div className="flex justify-between text-primary">
-                    <dt>Cupom {promo.code} (−{promo.percent}%)</dt>
+                    <dt>{t("cart.coupon", "Cupom")} {promo.code} (−{promo.percent}%)</dt>
                     <dd className="font-mono" data-testid="cart-discount">
-                      −{currency === "USD" ? (formatConverted(discount) ?? format(discount)) : format(discount)}
+                      −{format(getDiscount())}
                     </dd>
                   </div>
                 )}
                 <div className="flex justify-between border-t border-border/60 pt-4">
-                  <dt className="font-semibold">Total</dt>
+                  <dt className="font-semibold">{t("cart.total", "Total")}</dt>
                   <dd className="font-display text-3xl font-black" data-testid="cart-total">
-                    {currency === "USD" ? (formatConverted(total) ?? format(total)) : format(total)}
+                    {format(getTotal())}
                   </dd>
                 </div>
               </dl>
@@ -140,10 +150,10 @@ export default function CartPage() {
                 data-testid="cart-checkout-button"
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:shadow-xl hover:shadow-primary/25 active:scale-[0.98]"
               >
-                Ir para o checkout <ArrowRight className="h-4 w-4" />
+                {t("cart.goToCheckout", "Ir para o checkout")} <ArrowRight className="h-4 w-4" />
               </button>
               <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                Pagamento seguro via Stripe
+                {t("cart.securePayment", "Pagamento seguro via Stripe")}
               </p>
             </div>
           </FadeIn>
