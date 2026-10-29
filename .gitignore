@@ -26,3 +26,10 @@ app/fix.ps1
 app/frontend/.env.example
 app/frontend/fix.ps1
 app/fix_checkout.py
+app/fix2.py
+app/fix3.py
+app/fix4.ps1
+app/fix5.ps1
+app/fix6.ps1
+app/fix7.ps1
+app/fix9.ps1
