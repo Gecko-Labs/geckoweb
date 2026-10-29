@@ -4,6 +4,7 @@ import { CheckCircle2, Copy, Download, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { pollOrder } from "../lib/products";
 import { formatDate } from "../utils/format";
@@ -15,6 +16,7 @@ export default function PaymentSuccessPage() {
   const orderId = params.get("order");
 
   const { clear } = useCart();
+  const { refreshLicenses } = useAuth();
   const { format, currency, formatConverted } = useCurrency();
 
   const [state, setState] = useState("processing");
@@ -50,6 +52,8 @@ export default function PaymentSuccessPage() {
           if (!cleared.current) {
             cleared.current = true;
             clear();
+            // Atualizar licenças após pagamento confirmado
+            await refreshLicenses();
           }
         } else {
           setState("pending");
