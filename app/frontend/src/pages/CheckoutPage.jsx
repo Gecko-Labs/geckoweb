@@ -7,6 +7,7 @@ import { api, apiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useCurrency } from "../lib/currency";
+import { useI18n } from "../context/I18nContext";
 import { toCheckoutItem } from "../lib/products";
 import { FadeIn } from "../components/Reveal";
 
