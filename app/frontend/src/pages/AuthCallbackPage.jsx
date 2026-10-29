@@ -28,6 +28,26 @@ function getCallbackParams(searchParams, hash) {
   return params;
 }
 
+// Validate OAuth state parameter to prevent CSRF
+function validateOAuthState(receivedState) {
+  const storedState = sessionStorage.getItem("oauth_state");
+  const returnUrl = sessionStorage.getItem("oauth_return_url") || "/";
+  
+  // Clean up stored values
+  sessionStorage.removeItem("oauth_state");
+  sessionStorage.removeItem("oauth_return_url");
+  
+  if (!storedState) {
+    return { valid: false, error: "Estado de autenticação expirado ou inválido", returnUrl };
+  }
+  
+  if (receivedState !== storedState) {
+    return { valid: false, error: "Estado de autenticação inválido (CSRF protection)", returnUrl };
+  }
+  
+  return { valid: true, returnUrl };
+}
+
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -45,12 +65,27 @@ export default function AuthCallbackPage() {
       const token = params.token;
       const error = params.error;
       const errorDescription = params.error_description;
+      const receivedState = params.state;
 
       // Clean up URL immediately (remove token from history)
       if (window.history.replaceState) {
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, document.title, cleanUrl);
       }
+
+      // Validate OAuth state parameter (CSRF protection)
+      const stateValidation = validateOAuthState(receivedState);
+      
+      if (!stateValidation.valid) {
+        const msg = stateValidation.error;
+        setErrorMessage(msg);
+        setState("error");
+        toast.error(msg);
+        if (!cancelled) navigate("/login", { replace: true });
+        return;
+      }
+
+      const returnUrl = stateValidation.returnUrl;
 
       if (error) {
         const msg = errorDescription || error || "Falha na autenticação com Google";
@@ -81,7 +116,7 @@ export default function AuthCallbackPage() {
         toast.success("Login com Google realizado com sucesso");
 
         // Redirect to intended page or account
-        const from = params.from || "/";
+        const from = returnUrl || params.from || "/";
         if (!cancelled) navigate(from, { replace: true });
       } catch (err) {
         clearAuthToken();
