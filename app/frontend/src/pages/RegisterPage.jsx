@@ -34,9 +34,15 @@ export default function RegisterPage() {
   const googleLogin = () => {
     const apiBase = import.meta.env.VITE_API_URL || "/api";
     const returnUrl = `${window.location.origin}/auth/callback`;
+    // Gerar state criptograficamente seguro
+    const state = crypto.randomUUID();
+    // Armazenar state e returnUrl para validação no callback
+    sessionStorage.setItem("oauth_state", state);
+    sessionStorage.setItem("oauth_return_url", returnUrl);
     const params = new URLSearchParams({
       returnUrl: returnUrl,
       prompt: "select_account",
+      state: state,
     });
     window.location.href = `${apiBase}/auth/google?${params.toString()}`;
   };
