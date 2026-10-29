@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { ProductCard } from "../components/ProductCard";
 import { SectionHeading } from "../components/SectionHeading";
 import { Skeleton } from "../components/ui/skeleton";
-import { fetchProducts, fetchMyLicenses } from "../lib/products";
+import { fetchProducts } from "../lib/products";
 import {
   Select,
   SelectContent,
@@ -22,7 +22,13 @@ const PRICE_RANGES = [
   { value: "over-200", label: "Acima de R$ 200" },
 ];
 
+function getStandardPriceBRL(product) {
+  const priceObj = product.prices?.standard ?? {};
+  return priceObj.brl ?? priceObj.usd ?? priceObj.standard ?? null;
+}
+
 function inRange(priceCents, range) {
+  if (priceCents == null) return false;
   const v = priceCents / 100;
   if (range === "under-100") return v < 100;
   if (range === "100-200") return v >= 100 && v <= 200;
@@ -33,13 +39,17 @@ function inRange(priceCents, range) {
 export default function ProductsPage() {
   const [products, setProducts] = useState(null);
   const [error, setError] = useState(null);
-  const [ownedSlugs, setOwnedSlugs] = useState([]);
   const [search, setSearch] = useState("");
   const [params, setParams] = useSearchParams();
   const category = params.get("categoria") || "all";
   const [priceRange, setPriceRange] = useState("all");
   const [sort, setSort] = useState("featured");
-  const { user } = useAuth();
+  const { user, licenses, licensesVersion } = useAuth();
+
+  const ownedSlugs = useMemo(
+    () => licenses.filter((l) => l.status === "active").map((l) => l.product_slug),
+    [licenses, licensesVersion],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -59,15 +69,6 @@ export default function ProductsPage() {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (!user) return setOwnedSlugs([]);
-    fetchMyLicenses()
-      .then(({ data }) => {
-        setOwnedSlugs(data.filter((l) => l.status === "active").map((l) => l.product_slug));
-      })
-      .catch(() => {});
-  }, [user]);
 
   const retry = () => {
     setError(null);
@@ -89,20 +90,24 @@ export default function ProductsPage() {
     if (!products) return [];
     const q = search.trim().toLowerCase();
     let list = products.filter(
-      (p) =>
-        (category === "all" || p.category === category) &&
-        inRange(p.prices.standard, priceRange) &&
-        (!q ||
-          p.name.toLowerCase().includes(q) ||
-          p.tagline.toLowerCase().includes(q) ||
-          p.tags.some((t) => t.toLowerCase().includes(q))),
+      (p) => {
+        const standardPriceBRL = getStandardPriceBRL(p);
+        return (
+          (category === "all" || p.category === category) &&
+          inRange(standardPriceBRL, priceRange) &&
+          (!q ||
+            p.name.toLowerCase().includes(q) ||
+            p.tagline.toLowerCase().includes(q) ||
+            p.tags.some((t) => t.toLowerCase().includes(q))),
+        );
+      },
     );
-    if (sort === "price-asc") list = [...list].sort((a, b) => a.prices.standard - b.prices.standard);
-    if (sort === "price-desc") list = [...list].sort((a, b) => b.prices.standard - a.prices.standard);
+    if (sort === "price-asc") list = [...list].sort((a, b) => (getStandardPriceBRL(a) ?? Infinity) - (getStandardPriceBRL(b) ?? Infinity));
+    if (sort === "price-desc") list = [...list].sort((a, b) => (getStandardPriceBRL(b) ?? -Infinity) - (getStandardPriceBRL(a) ?? -Infinity));
     if (sort === "rating") list = [...list].sort((a, b) => b.rating - a.rating);
     if (sort === "featured") list = [...list].sort((a, b) => Number(b.featured) - Number(a.featured));
     return list;
-  }, [products, search, category, priceRange, sort]);
+  }, [products, category, priceRange, search, sort]);
 
   const setCategory = (c) => {
     if (c === "all") params.delete("categoria");
