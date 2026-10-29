@@ -15,7 +15,6 @@ import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { I18nProvider } from "./context/I18nContext";
-import { I18nProvider as LibI18nProvider } from "./lib/i18n";
 import { CurrencyProvider } from "./lib/currency";
 
 import { Navbar } from "./components/Navbar";
@@ -174,19 +173,17 @@ function Shell() {
 function App() {
   return (
     <I18nProvider>
-      <LibI18nProvider>
-        <CurrencyProvider>
-          <ThemeProvider>
-            <AuthProvider>
-              <CartProvider>
-                <BrowserRouter>
-                  <Shell />
-                </BrowserRouter>
-              </CartProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </CurrencyProvider>
-      </LibI18nProvider>
+      <CurrencyProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <CartProvider>
+              <BrowserRouter>
+                <Shell />
+              </BrowserRouter>
+            </CartProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </CurrencyProvider>
     </I18nProvider>
   );
 }
