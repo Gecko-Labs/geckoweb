@@ -124,8 +124,8 @@ const fromApi = (p) => {
       if (prices[tier].brl != null) prices[tier].standard = prices[tier].brl;
     }
   });
-  // Produtos sem planos (ex: gratuitos) recebem preço zero no tier standard.
-  if (!prices.standard) prices.standard = 0;
+  // Produtos sem planos (ex: gratuitos) não recebem preço padrão.
+  // O billingModel no CONTENT indicará se é gratuito.
   const img = cover("#111827", "#10B981");
   const content = CONTENT[slug] || {};
   // Garantir que campos de array sejam sempre arrays, mesmo se CONTENT tiver valores inválidos
