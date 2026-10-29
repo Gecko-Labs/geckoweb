@@ -15,6 +15,13 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    proxy: {
+      "/geckolicense/download": {
+        target: "https://geckolabsdev.duckdns.org",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   build: {
     sourcemap: true,
