@@ -126,6 +126,16 @@ function Shell() {
             element={<PaymentCancelPage />}
           />
 
+          <Route
+            path="/checkout/success"
+            element={<PaymentSuccessPage />}
+          />
+
+          <Route
+            path="/checkout/cancel"
+            element={<PaymentCancelPage />}
+          />
+
           <Route path="/login" element={<LoginPage />} />
 
           <Route path="/register" element={<RegisterPage />} />
