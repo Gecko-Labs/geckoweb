@@ -20,7 +20,7 @@ function LetterByLetter({ text, className = '' }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
-          style={{ display: 'inline-block' }}
+          style={{ display: 'inline-block', whiteSpace: 'pre' }}
         >
           {word}{i < words.length - 1 ? ' ' : ''}
         </motion.span>
@@ -128,7 +128,7 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <LetterByLetter text={t('home.hero.title', 'Software construdo para criar mais.')} />
+            <LetterByLetter text={t('home.hero.title', 'Software construído para criar mais.')} />
           </motion.h1>
 
           <motion.p

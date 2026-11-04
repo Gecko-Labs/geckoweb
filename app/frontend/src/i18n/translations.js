@@ -335,7 +335,10 @@ const translations = {
   },
 
   "en-US": {
-    common: {
+      nav: {
+        download: "Download GeckoLauncher",
+      },
+      common: {
       home: "Home",
       products: "Products",
       services: "Services",
