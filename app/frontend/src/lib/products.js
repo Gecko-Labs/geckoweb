@@ -137,7 +137,51 @@ const CONTENT = {
   },
 };
 
-const fromApi = (p) => {
+const LOCALIZED_CONTENT = {
+  ldia: {
+    "en-US": {
+      tagline: "Clinical reports with AI, grounded in scientific evidence",
+      category: "Health & Clinics",
+      badge: "Launch",
+      short_desc: "AI hub to generate multi-professional reports based on scientific studies, integrated with clinic management.",
+      description: "LaudIA is a desktop app for multi-professional clinics. It combines patient and professional management with an AI hub that helps draft reports grounded in scientific studies, always reviewed and signed by the responsible professional. Lifetime license, offline validation.",
+      features: [
+        "Registration of patients and professionals from different councils",
+        "Report generation with AI and references to scientific studies",
+        "Review and signature flow by the responsible professional",
+        "Lifetime license with offline validation",
+        "Updates via GeckoLicense Launcher",
+      ],
+      requirements: { os: "Windows 10 (1809+) or Windows 11", memory: "4 GB RAM (8 GB recommended)", runtime: "Included in installer", deps: "Internet for the AI module and periodic license validation" },
+      faq: [
+        { q: "Is the license lifetime?", a: "Yes. You pay once and keep using the software, no subscription." },
+        { q: "Do I need internet?", a: "The license works offline after activation. The AI module and updates need a connection." },
+        { q: "On how many computers can I use it?", a: "Each license is valid for 1 device. You can manage this from your account." },
+      ],
+    },
+    es: {
+      tagline: "Informes clínicos con IA, fundamentados en evidencia científica",
+      category: "Salud y clínicas",
+      badge: "Lanzamiento",
+      short_desc: "Central de IA para generar informes multiprofesionales basados en estudios científicos, integrada a la gestión de la clínica.",
+      description: "LaudIA es una aplicación de escritorio para clínicas multiprofesionales. Reúne la gestión de pacientes y profesionales y una central de IA que ayuda a redactar informes fundamentados en estudios científicos, siempre con revisión y firma del profesional responsable. Licencia vitalicia, con validación sin conexión.",
+      features: [
+        "Registro de pacientes y profesionales de distintos consejos",
+        "Generación de informes con IA y referencias a estudios científicos",
+        "Flujo de revisión y firma por el profesional responsable",
+        "Licencia vitalicia con validación sin conexión",
+        "Actualizaciones mediante GeckoLicense Launcher",
+      ],
+      requirements: { os: "Windows 10 (1809+) o Windows 11", memory: "4 GB de RAM (8 GB recomendado)", runtime: "Incluido en el instalador", deps: "Internet para el módulo de IA y para validar la licencia periódicamente" },
+      faq: [
+        { q: "¿La licencia es vitalicia?", a: "Sí. Pagas una vez y sigues usando el software, sin mensualidad." },
+        { q: "¿Necesito internet?", a: "La licencia funciona sin conexión después de activarse. El módulo de IA y las actualizaciones necesitan conexión." },
+        { q: "¿En cuántas computadoras puedo usarlo?", a: "Cada licencia vale para 1 dispositivo. Puedes gestionarlo desde tu cuenta." },
+      ],
+    },
+  },
+};
+const fromApi = (p, locale = "pt-BR") => {
   // Derivar slug de forma segura - a API pode retornar code, slug ou productCode
   const rawSlug = p.code ?? p.slug ?? p.productCode ?? "";
   const slug = String(rawSlug).toLowerCase();
@@ -156,7 +200,7 @@ const fromApi = (p) => {
   // Produtos sem planos (ex: gratuitos) não recebem preço padrão.
   // O billingModel no CONTENT indicará se é gratuito.
   const img = cover("#111827", "#10B981");
-  const content = CONTENT[slug] || {};
+  const content = { ...(CONTENT[slug] || {}), ...(LOCALIZED_CONTENT[slug]?.[locale] || {}) };
   // Garantir que campos de array sejam sempre arrays, mesmo se CONTENT tiver valores inválidos
   const ensureArray = (val, fallback) => Array.isArray(val) ? val : fallback;
   return {
@@ -223,14 +267,14 @@ export async function fetchProducts(locale = "pt-BR") {
   const { data } = await api.get("/products");
   // A API pode retornar um array direto ou um objeto { items: [...], data: [...] }
   const productsArray = Array.isArray(data) ? data : (data.items ?? data.data ?? []);
-  return { data: productsArray.map(fromApi) };
+  return { data: productsArray.map((p) => fromApi(p, locale)) };
 }
 
 export async function fetchProduct(slug, locale = "pt-BR") {
   const { data } = await api.get(`/products/${slug.toUpperCase()}`);
   // A API pode retornar o produto diretamente ou envolto em { data: {...} }
   const productData = data.product ?? data;
-  return { data: fromApi(productData) };
+  return { data: fromApi(productData, locale) };
 }
 
 export async function fetchMyLicenses() {
