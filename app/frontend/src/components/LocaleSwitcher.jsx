@@ -28,6 +28,7 @@ export function LocaleSwitcher() {
       >
         <option value="pt-BR">PT-BR</option>
         <option value="en-US">EN-US</option>
+        <option value="es">ES</option>
       </select>
 
       <label htmlFor="currency-select" className="sr-only">
