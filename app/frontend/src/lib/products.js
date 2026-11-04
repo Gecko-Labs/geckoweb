@@ -219,14 +219,14 @@ export const toCheckoutItem = (item) => ({
   planCode: PLAN_BY_TIER[item.tier] || "VITALI",
 });
 
-export async function fetchProducts() {
+export async function fetchProducts(locale = "pt-BR") {
   const { data } = await api.get("/products");
   // A API pode retornar um array direto ou um objeto { items: [...], data: [...] }
   const productsArray = Array.isArray(data) ? data : (data.items ?? data.data ?? []);
   return { data: productsArray.map(fromApi) };
 }
 
-export async function fetchProduct(slug) {
+export async function fetchProduct(slug, locale = "pt-BR") {
   const { data } = await api.get(`/products/${slug.toUpperCase()}`);
   // A API pode retornar o produto diretamente ou envolto em { data: {...} }
   const productData = data.product ?? data;
