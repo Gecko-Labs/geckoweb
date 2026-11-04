@@ -12,7 +12,7 @@ import translations from "../i18n/translations";
 
 const I18nContext = createContext(null);
 
-const SUPPORTED_LOCALES = ["pt-BR", "en-US"];
+const SUPPORTED_LOCALES = ["pt-BR", "en-US", "es"];
 
 function getInitialLocale() {
   try {
