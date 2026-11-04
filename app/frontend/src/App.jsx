@@ -27,6 +27,7 @@ import { Toaster } from "./components/ui/sonner";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import LaudIAPage from "./pages/LaudIAPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
@@ -99,6 +100,8 @@ function Shell() {
           <Route path="/" element={<HomePage />} />
 
           <Route path="/products" element={<ProductsPage />} />
+
+<Route path="/products/ldia" element={<LaudIAPage />} />
 
           <Route
             path="/products/:slug"
