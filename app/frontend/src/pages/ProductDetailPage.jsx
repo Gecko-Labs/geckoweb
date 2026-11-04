@@ -8,9 +8,9 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useCurrency } from "../lib/currency";
 import { useI18n } from "../context/I18nContext";
+import { fetchProduct } from "../lib/products";
 import { FadeIn } from "../components/Reveal";
 import { Skeleton } from "../components/ui/skeleton";
-import { fetchProduct } from "../lib/products";
 import {
   Accordion,
   AccordionContent,
@@ -29,7 +29,7 @@ export default function ProductDetailPage() {
   const { user, licenses, licensesVersion } = useAuth();
   const { addItem, hasItem } = useCart();
   const { format, currency } = useCurrency();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [product, setProduct] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [loadError, setLoadError] = useState(false);
@@ -46,7 +46,7 @@ export default function ProductDetailPage() {
     setNotFound(false);
     setLoadError(false);
     setActiveImage(0);
-    fetchProduct(slug)
+    fetchProduct(slug, locale)
       .then(({ data }) => setProduct(data))
       .catch((err) => {
         if (err?.status === 404) {
@@ -55,7 +55,7 @@ export default function ProductDetailPage() {
           setLoadError(true);
         }
       });
-  }, [slug]);
+  }, [slug, locale]);
 
   if (notFound) {
     return (
