@@ -139,4 +139,3 @@ export default function LaudIAPage() {
     </main>
   );
 }
-EOF
