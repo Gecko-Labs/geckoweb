@@ -106,6 +106,35 @@ const CONTENT = {
     image: cover("#111827", "#10B981"),
     gallery: [cover("#111827", "#10B981")],
   },
+  "instrument-ia": {
+    tagline: "Instrumentação psicológica integrada ao LaudIA (em desenvolvimento)",
+    category: "Saúde & Clínicas",
+    badge: "Em desenvolvimento",
+    featured: false,
+    billingModel: "free",
+    short_desc:
+      "Módulo de instrumentos psicológicos em desenvolvimento, que fornecerá contexto auxiliar ao LaudIA na elaboração de laudos.",
+    description:
+      "O Instrument.IA é um módulo planejado para integrar instrumentos psicológicos ao LaudIA. Ainda em desenvolvimento: permitirá que resultados de instrumentos sejam usados como contexto auxiliar na elaboração de laudos, mantendo fontes e resultados identificáveis.",
+    compatibility: ["Windows 10 (64 bits)", "Windows 11"],
+    tags: ["IA", "Instrumentos", "Em desenvolvimento", "LaudIA"],
+    features: [
+      "Integração planejada com o LaudIA",
+      "Contexto auxiliar para elaboração de laudos",
+      "Fontes e resultados identificáveis",
+    ],
+    requirements: {
+      os: "Windows 10 (1809+) ou Windows 11",
+      memory: "—",
+      runtime: "—",
+      deps: "Disponível junto com o LaudIA",
+    },
+    faq: [
+      { q: "O Instrument.IA já está disponível?", a: "Não. Está em desenvolvimento e será integrado ao LaudIA." },
+    ],
+    image: cover("#0b2a26", "#10B981"),
+    gallery: [cover("#0b2a26", "#10B981")],
+  },
 };
 
 const fromApi = (p) => {
