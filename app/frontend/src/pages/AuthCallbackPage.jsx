@@ -28,27 +28,10 @@ function getCallbackParams(searchParams, hash) {
   return params;
 }
 
-// Recupera o destino original e limpa os dados temporários.
-// A validação OAuth de state é realizada pelo backend.
-function getOAuthReturnUrl() {
-  const returnUrl =
-    sessionStorage.getItem("oauth_return_url") || "/";
-
+// Limpa os dados temporários do OAuth.
+function clearOAuthData() {
   sessionStorage.removeItem("oauth_state");
   sessionStorage.removeItem("oauth_return_url");
-
-  // Impede redirecionamentos para domínios externos.
-  try {
-    const destination = new URL(returnUrl, window.location.origin);
-
-    if (destination.origin !== window.location.origin) {
-      return "/";
-    }
-
-    return `${destination.pathname}${destination.search}${destination.hash}`;
-  } catch {
-    return "/";
-  }
 }
 
 export default function AuthCallbackPage() {
@@ -63,7 +46,6 @@ export default function AuthCallbackPage() {
     let cancelled = false;
 
     const handleCallback = async () => {
-      // Lê os parâmetros enviados pela API.
       const params = getCallbackParams(
         searchParams,
         window.location.hash
@@ -73,10 +55,9 @@ export default function AuthCallbackPage() {
       const error = params.error;
       const errorDescription = params.error_description;
 
-      // Limpa os dados temporários do OAuth.
-      const returnUrl = getOAuthReturnUrl();
+      clearOAuthData();
 
-      // Remove o token da URL e do histórico de navegação.
+      // Remove o token da URL e do histórico.
       window.history.replaceState(
         {},
         document.title,
@@ -85,7 +66,7 @@ export default function AuthCallbackPage() {
 
       if (cancelled) return;
 
-      // Verifica se a autenticação retornou um erro.
+      // Trata erros retornados pela API.
       if (error) {
         const msg =
           errorDescription ||
@@ -100,7 +81,7 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      // Verifica se a API entregou o JWT.
+      // Verifica se o token foi recebido.
       if (!token) {
         const msg = "Token de autenticação não recebido";
 
@@ -113,10 +94,10 @@ export default function AuthCallbackPage() {
       }
 
       try {
-        // Armazena o JWT recebido da API.
+        // Salva o JWT.
         setAuthToken(token);
 
-        // Valida o token e carrega os dados do usuário.
+        // Valida a sessão e carrega os dados do usuário.
         await refresh();
 
         if (cancelled) return;
@@ -124,8 +105,8 @@ export default function AuthCallbackPage() {
         setState("success");
         toast.success("Login com Google realizado com sucesso");
 
-        // Redireciona para o destino original.
-        navigate(returnUrl, { replace: true });
+        // REDIRECIONAMENTO DIRETO PARA A HOME.
+        navigate("/", { replace: true });
       } catch (err) {
         clearAuthToken();
 
