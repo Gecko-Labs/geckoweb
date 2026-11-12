@@ -1,130 +1,146 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
-import { api, apiError, setAuthToken, clearAuthToken } from "../lib/api";
+import { apiError, setAuthToken, clearAuthToken } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { GeckoMark } from "../components/GeckoMark";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
-// Helper to parse params from both query string and URL fragment
+// Obtém parâmetros da query string e do fragmento da URL.
 function getCallbackParams(searchParams, hash) {
   const params = {};
-  
-  // From query string
+
   searchParams.forEach((value, key) => {
     params[key] = value;
   });
-  
-  // From fragment (hash)
+
   if (hash) {
     const hashParams = new URLSearchParams(hash.replace(/^#/, ""));
+
     hashParams.forEach((value, key) => {
       params[key] = value;
     });
   }
-  
+
   return params;
 }
 
-// Validate OAuth state parameter to prevent CSRF
-function validateOAuthState(receivedState) {
-  const storedState = sessionStorage.getItem("oauth_state");
-  const returnUrl = sessionStorage.getItem("oauth_return_url") || "/";
-  
-  // Clean up stored values
+// Recupera o destino original e limpa os dados temporários.
+// A validação OAuth de state é realizada pelo backend.
+function getOAuthReturnUrl() {
+  const returnUrl =
+    sessionStorage.getItem("oauth_return_url") || "/";
+
   sessionStorage.removeItem("oauth_state");
   sessionStorage.removeItem("oauth_return_url");
-  
-  if (!storedState) {
-    return { valid: false, error: "Estado de autenticação expirado ou inválido", returnUrl };
+
+  // Impede redirecionamentos para domínios externos.
+  try {
+    const destination = new URL(returnUrl, window.location.origin);
+
+    if (destination.origin !== window.location.origin) {
+      return "/";
+    }
+
+    return `${destination.pathname}${destination.search}${destination.hash}`;
+  } catch {
+    return "/";
   }
-  
-  if (receivedState !== storedState) {
-    return { valid: false, error: "Estado de autenticação inválido (CSRF protection)", returnUrl };
-  }
-  
-  return { valid: true, returnUrl };
 }
 
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { refresh } = useAuth();
-  const [state, setState] = useState("processing"); // processing, success, error
+
+  const [state, setState] = useState("processing");
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     let cancelled = false;
 
     const handleCallback = async () => {
-      // Parse params from both query string and fragment
-      const params = getCallbackParams(searchParams, window.location.hash);
-      
+      // Lê os parâmetros enviados pela API.
+      const params = getCallbackParams(
+        searchParams,
+        window.location.hash
+      );
+
       const token = params.token;
       const error = params.error;
       const errorDescription = params.error_description;
-      const receivedState = params.state;
 
-      // Clean up URL immediately (remove token from history)
-      if (window.history.replaceState) {
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
-      }
+      // Limpa os dados temporários do OAuth.
+      const returnUrl = getOAuthReturnUrl();
 
-      // Validate OAuth state parameter (CSRF protection)
-      const stateValidation = validateOAuthState(receivedState);
-      
-      if (!stateValidation.valid) {
-        const msg = stateValidation.error;
-        setErrorMessage(msg);
-        setState("error");
-        toast.error(msg);
-        if (!cancelled) navigate("/login", { replace: true });
-        return;
-      }
+      // Remove o token da URL e do histórico de navegação.
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
 
-      const returnUrl = stateValidation.returnUrl;
+      if (cancelled) return;
 
+      // Verifica se a autenticação retornou um erro.
       if (error) {
-        const msg = errorDescription || error || "Falha na autenticação com Google";
+        const msg =
+          errorDescription ||
+          error ||
+          "Falha na autenticação com Google";
+
         setErrorMessage(msg);
         setState("error");
         toast.error(msg);
-        if (!cancelled) navigate("/login", { replace: true });
+
+        navigate("/login", { replace: true });
         return;
       }
 
+      // Verifica se a API entregou o JWT.
       if (!token) {
         const msg = "Token de autenticação não recebido";
+
         setErrorMessage(msg);
         setState("error");
         toast.error(msg);
-        if (!cancelled) navigate("/login", { replace: true });
+
+        navigate("/login", { replace: true });
         return;
       }
 
       try {
-        // Store the token
+        // Armazena o JWT recebido da API.
         setAuthToken(token);
 
-        // Verify token and fetch user
+        // Valida o token e carrega os dados do usuário.
         await refresh();
+
+        if (cancelled) return;
 
         setState("success");
         toast.success("Login com Google realizado com sucesso");
 
-        // Redirect to intended page or account
-        const from = returnUrl || params.from || "/";
-        if (!cancelled) navigate(from, { replace: true });
+        // Redireciona para o destino original.
+        navigate(returnUrl, { replace: true });
       } catch (err) {
         clearAuthToken();
-        const msg = apiError(err, "Não foi possível validar a sessão");
+
+        if (cancelled) return;
+
+        const msg = apiError(
+          err,
+          "Não foi possível validar a sessão"
+        );
+
         setErrorMessage(msg);
         setState("error");
         toast.error(msg);
-        if (!cancelled) navigate("/login", { replace: true });
+
+        navigate("/login", { replace: true });
       }
     };
 
@@ -135,18 +151,30 @@ export default function AuthCallbackPage() {
     };
   }, [searchParams, navigate, refresh]);
 
+  // Estado de processamento.
   if (state === "processing") {
     return (
-      <main className="flex min-h-screen items-center justify-center px-4" data-testid="auth-callback-page">
+      <main
+        className="flex min-h-screen items-center justify-center px-4"
+        data-testid="auth-callback-page"
+      >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: 0.55,
+            ease: [0.22, 1, 0.36, 1],
+          }}
           className="w-full max-w-md rounded-xl border border-border/70 bg-card p-8 text-center"
         >
-          <GeckoMark className="h-14 w-14 object-contain mx-auto mb-6" />
-          <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
-          <h1 className="font-display text-2xl font-bold uppercase tracking-wide">Finalizando login…</h1>
+          <GeckoMark className="mx-auto mb-6 h-14 w-14 object-contain" />
+
+          <Loader2 className="mx-auto mb-4 h-10 w-10 animate-spin text-primary" />
+
+          <h1 className="font-display text-2xl font-bold uppercase tracking-wide">
+            Finalizando login…
+          </h1>
+
           <p className="mt-2 text-sm text-muted-foreground">
             Aguarde enquanto validamos sua autenticação com o Google.
           </p>
@@ -155,21 +183,34 @@ export default function AuthCallbackPage() {
     );
   }
 
+  // Estado de erro.
   if (state === "error") {
     return (
-      <main className="flex min-h-screen items-center justify-center px-4" data-testid="auth-callback-error">
+      <main
+        className="flex min-h-screen items-center justify-center px-4"
+        data-testid="auth-callback-error"
+      >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: 0.55,
+            ease: [0.22, 1, 0.36, 1],
+          }}
           className="w-full max-w-md rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center"
         >
-          <GeckoMark className="h-14 w-14 object-contain mx-auto mb-6 opacity-60" />
-          <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-4" />
+          <GeckoMark className="mx-auto mb-6 h-14 w-14 object-contain opacity-60" />
+
+          <AlertCircle className="mx-auto mb-4 h-10 w-10 text-destructive" />
+
           <h1 className="font-display text-2xl font-bold uppercase tracking-wide text-destructive">
             Falha na autenticação
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
+
+          <p className="mt-2 text-sm text-muted-foreground">
+            {errorMessage}
+          </p>
+
           <div className="mt-6 flex flex-col gap-3">
             <button
               onClick={() => navigate("/login", { replace: true })}
@@ -177,6 +218,7 @@ export default function AuthCallbackPage() {
             >
               Tentar novamente
             </button>
+
             <button
               onClick={() => navigate("/", { replace: true })}
               className="rounded-md border border-border px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary"
@@ -189,21 +231,32 @@ export default function AuthCallbackPage() {
     );
   }
 
-  // Success state - brief display before redirect
+  // Estado de sucesso.
   return (
-    <main className="flex min-h-screen items-center justify-center px-4" data-testid="auth-callback-success">
+    <main
+      className="flex min-h-screen items-center justify-center px-4"
+      data-testid="auth-callback-success"
+    >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        transition={{
+          duration: 0.55,
+          ease: [0.22, 1, 0.36, 1],
+        }}
         className="w-full max-w-md rounded-xl border border-primary/30 bg-primary/5 p-8 text-center"
       >
-        <GeckoMark className="h-14 w-14 object-contain mx-auto mb-6" />
-        <CheckCircle2 className="h-10 w-10 text-primary mx-auto mb-4" />
+        <GeckoMark className="mx-auto mb-6 h-14 w-14 object-contain" />
+
+        <CheckCircle2 className="mx-auto mb-4 h-10 w-10 text-primary" />
+
         <h1 className="font-display text-2xl font-bold uppercase tracking-wide text-primary">
           Autenticação confirmada
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">Redirecionando para sua conta…</p>
+
+        <p className="mt-2 text-sm text-muted-foreground">
+          Redirecionando para sua conta…
+        </p>
       </motion.div>
     </main>
   );
